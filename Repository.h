@@ -5,8 +5,10 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "Customer.h" // Include Customer class
+#include "Customer.h"
+#include "Vehicle.h"
 
+// Generic Repository
 template <typename T>
 class Repository {
 public:
@@ -19,9 +21,10 @@ public:
     }
 
     std::shared_ptr<T> findById(const std::string& id) const {
-        auto it = std::find_if(items.begin(), items.end(), [&id](const std::shared_ptr<T>& item) {
-            return item->getVehicleID() == id;
-        });
+        auto it = std::find_if(items.begin(), items.end(),
+            [&id](const std::shared_ptr<T>& item) {
+                return item->getID() == id;
+            });
         return (it != items.end()) ? *it : nullptr;
     }
 
@@ -49,11 +52,10 @@ public:
         items.erase(std::remove(items.begin(), items.end(), item), items.end());
     }
 
-    std::shared_ptr<Customer> findById(const std::string& id) const {
-        int intId = std::stoi(id); // Convert string ID to integer
+    std::shared_ptr<Customer> findById(int id) const {
         auto it = std::find_if(items.begin(), items.end(),
-            [intId](const std::shared_ptr<Customer>& item) {
-                return item->getCustomerID() == intId;
+            [&id](const std::shared_ptr<Customer>& item) {
+                return item->getCustomerID() == id;
             });
         return (it != items.end()) ? *it : nullptr;
     }
@@ -68,6 +70,38 @@ public:
 
 private:
     std::vector<std::shared_ptr<Customer>> items;
+};
+
+// Specialization for Vehicle
+template <>
+class Repository<Vehicle> {
+public:
+    void add(const std::shared_ptr<Vehicle>& item) {
+        items.push_back(item);
+    }
+
+    void remove(const std::shared_ptr<Vehicle>& item) {
+        items.erase(std::remove(items.begin(), items.end(), item), items.end());
+    }
+
+    std::shared_ptr<Vehicle> findById(const std::string& id) const {
+        auto it = std::find_if(items.begin(), items.end(),
+            [&id](const std::shared_ptr<Vehicle>& item) {
+                return item->getVehicleID() == id;
+            });
+        return (it != items.end()) ? *it : nullptr;
+    }
+
+    const std::vector<std::shared_ptr<Vehicle>>& getAll() const {
+        return items;
+    }
+
+    void clear() {
+        items.clear();
+    }
+
+private:
+    std::vector<std::shared_ptr<Vehicle>> items;
 };
 
 #endif // REPOSITORY_H

@@ -96,15 +96,16 @@ std::shared_ptr<Vehicle> RentalCompany::searchVehicle(const std::string& vehicle
 
 // Add a new customer (with duplication check)
 void RentalCompany::addCustomer(const Customer& customer) {
-    if (customerRepository.findById(std::to_string(customer.getCustomerID())) != nullptr) {
-        throw std::runtime_error("Error: Customer ID " + std::to_string(customer.getCustomerID()) + " already exists.");
+    int customerID = customer.getCustomerID();
+    if (customerRepository.findById(customerID) != nullptr) {
+        throw std::runtime_error("Error: Customer ID " + std::to_string(customerID) + " already exists.");
     }
     addItem(customerRepository, std::make_shared<Customer>(customer));
 }
 
 // Remove a customer by ID
 void RentalCompany::removeCustomer(int customerID) {
-    auto customer = searchItemById(customerRepository, std::to_string(customerID));
+    auto customer = searchItemById(customerRepository, customerID);
     if (customer) {
         removeItem(customerRepository, customer);
     } else {
@@ -124,7 +125,7 @@ void RentalCompany::displayCustomers() const {
 
 // Search for a customer by ID
 Customer* RentalCompany::searchCustomer(int customerID) {
-    auto customer = searchItemById(customerRepository, std::to_string(customerID));
+    auto customer = searchItemById(customerRepository, customerID);
     return customer ? customer.get() : nullptr;
 }
 
