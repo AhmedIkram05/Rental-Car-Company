@@ -15,17 +15,17 @@
 template <typename T>
 void displayItems(const std::vector<std::shared_ptr<T>>& items) {
     for (const auto& item : items) {
-        if (auto vehicle = std::dynamic_pointer_cast<Vehicle>(item)) {
-            vehicle->displayVehicle();
-        } else if (auto customer = std::dynamic_pointer_cast<Customer>(item)) {
-            customer->displayCustomer();
+        if constexpr (std::is_base_of<Vehicle, T>::value) {
+            item->displayVehicle();
+        } else if constexpr (std::is_same<T, Customer>::value) {
+            item->displayCustomer();
         }
     }
 }
 
 // Template for searching item by ID
-template <typename T>
-std::shared_ptr<T> searchItemById(const Repository<T>& repository, const std::string& id) {
+template <typename T, typename IDType>
+std::shared_ptr<T> searchItemById(const Repository<T>& repository, const IDType& id) {
     return repository.findById(id);
 }
 

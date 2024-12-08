@@ -77,7 +77,6 @@ int main() {
                 break;
             case 10:
                 runSpecificTests(company);
-                company.loadFromFile("mainVehicles.txt", "mainCustomers.txt");
                 break;
             case 11:
                 // Save data before exiting
