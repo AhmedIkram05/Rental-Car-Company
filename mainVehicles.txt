@@ -1,0 +1,11 @@
+Car V101 "Ford" "Fiesta" 5 40 0
+Car V102 "Audi" "Q8" 6 60 0
+Car V103 "Nissan" "Micra" 4 30 0
+Car V104 "Honda" "Civic" 5 35 0
+Car V105 "Audi" "Q2" 4 35 0
+Car V106 "Seat" "Ateca" 5 45 0
+Car V107 "Peugeot" "2008" 5 50 0
+Van V201 "Mercedes" "Sprinter" 2 1000 1
+Minibus V301 "Ford" "Transit" 15 500 1
+SUV V401 "Toyota" "Highlander" 7 50 1
+SUV V402 "Honda" "CR-V" 5 45 1

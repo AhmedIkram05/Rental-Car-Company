@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(lldb) Attach",
+      "type": "cppdbg",
+      "request": "attach",
+      "program": "enter program name, for example ${workspaceFolder}/a.out",
+      "MIMode": "lldb"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/ahmedikram/Library/CloudStorage/OneDrive-UniversityofDundee/Documents/2nd Year/Sem 1/Multi-Paradigm-Programming/C++ Assignment/Rental Car Company",
+      "program": "/Users/ahmedikram/Library/CloudStorage/OneDrive-UniversityofDundee/Documents/2nd Year/Sem 1/Multi-Paradigm-Programming/C++ Assignment/Rental Car Company/build/Debug/outDebug"
+    }
+  ]
+}
