@@ -208,6 +208,16 @@ void runSpecificTests(RentalCompany& company) {
         std::cout << "Test 8 FAILED: " << e.what() << "\n\n";
     }
 
+    // Reload main data after tests
+    company.clearData();
+    
+    try {
+        company.loadFromFile("mainVehicles.txt", "mainCustomers.txt");
+        std::cout << "Main Data Reloaded Successfully.\n\n";
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Failed to reload main data: " << e.what() << "\n";
+    }
     std::cout << "=== Specific Test Scenarios Completed ===\n\n";
 }
 
