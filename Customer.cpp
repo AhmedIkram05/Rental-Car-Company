@@ -10,15 +10,6 @@ Customer::Customer(int id, const std::string& nm) : customerID(id), name(nm), lo
 // Destructor
 Customer::~Customer() {}
 
-// Implement displayCustomer
-void Customer::displayCustomer() const {
-    std::cout << "Customer ID: " << customerID << ", Name: " << name << ", Loyalty Points: " << loyaltyPoints << "\n";
-    std::cout << "Rentals:\n";
-    for (const auto& rental : rentedVehicles) {
-        std::cout << "  Vehicle ID: " << rental.vehicle->getVehicleID() << ", Rent Date: " << rental.rentDate << ", Due Date: " << rental.dueDate << "\n";
-    }
-}
-
 // Getters
 int Customer::getCustomerID() const { return customerID; }
 std::string Customer::getName() const { return name; }
@@ -27,46 +18,71 @@ int Customer::getLoyaltyPoints() const { return loyaltyPoints; }
 
 // Rent a vehicle
 void Customer::rentVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::string& rentDate, const std::string& dueDate) {
-    rentedVehicles.push_back({ vehicle, rentDate, dueDate });
+    rentedVehicles.push_back(RentalInfo{ vehicle, rentDate, dueDate });
+    std::cout << "Vehicle ID " << vehicle->getVehicleID() << " rented on " << rentDate << ", due on " << dueDate << ".\n";
 }
 
 // Return a vehicle
 int Customer::returnVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::string& returnDate) {
-    auto it = std::find_if(rentedVehicles.begin(), rentedVehicles.end(), [&vehicle](const RentalInfo& rental) {
-        return rental.vehicle == vehicle;
-    });
+    auto it = std::find_if(rentedVehicles.begin(), rentedVehicles.end(),
+                           [&](const RentalInfo& rental) { return rental.vehicle->getVehicleID() == vehicle->getVehicleID(); });
 
     if (it != rentedVehicles.end()) {
-        int daysLate = DateUtils::calculateDaysLate(it->dueDate, returnDate);
+        // Calculate days late
+        int daysLate = DateUtils::daysDifference(it->dueDate, returnDate);
         rentedVehicles.erase(it);
-        if (daysLate <= 0) {
-            loyaltyPoints += 10; // Add loyalty points for on-time return
-        }
-        return daysLate;
+        return daysLate > 0 ? daysLate : 0;
+    } else {
+        throw std::runtime_error("Error: Vehicle ID " + vehicle->getVehicleID() + " not found in rentals.");
     }
+}
 
-    throw std::runtime_error("Vehicle not found in customer's rented vehicles.");
+// Display customer information
+void Customer::displayCustomer() const {
+    std::cout << "### Customer Details ###\n";
+    std::cout << "ID: " << customerID << "\nName: " << name
+              << "\nLoyalty Points: " << loyaltyPoints << "\nRented Vehicles:\n";
+
+    if (rentedVehicles.empty()) {
+        std::cout << "None\n\n";
+    } else {
+        for (const auto& rental : rentedVehicles) {
+            std::cout << "- Vehicle ID: " << rental.vehicle->getVehicleID()
+                      << ", Rent Date: " << rental.rentDate
+                      << ", Due Date: " << rental.dueDate << "\n";
+        }
+        std::cout << "\n";
+    }
 }
 
 // Check if customer has rented a specific vehicle
 bool Customer::hasRentedVehicle(const std::shared_ptr<Vehicle>& vehicle) const {
-    return std::any_of(rentedVehicles.begin(), rentedVehicles.end(), [&vehicle](const RentalInfo& rental) {
-        return rental.vehicle == vehicle;
-    });
+    return std::any_of(rentedVehicles.begin(), rentedVehicles.end(),
+                       [&](const RentalInfo& rental) { return rental.vehicle->getVehicleID() == vehicle->getVehicleID(); });
 }
 
 // Apply loyalty discount
 bool Customer::applyLoyaltyDiscount() {
-    if (loyaltyPoints >= 100) {
-        loyaltyPoints -= 100;
+    const int discountThreshold = 100; // Points needed for discount
+    if (loyaltyPoints >= discountThreshold) {
+        loyaltyPoints -= discountThreshold;
         return true;
     }
     return false;
 }
 
-// Method to add a RentalInfo directly
+// Add loyalty points
+void Customer::addLoyaltyPoints(int points) {
+    loyaltyPoints += points;
+    std::cout << "Loyalty Points Updated: " << loyaltyPoints << "\n";
+}
+
+// Set loyalty points (used when loading from file)
+void Customer::setLoyaltyPoints(int points) {
+    loyaltyPoints = points;
+}
+
+// Add a RentalInfo directly (used when loading from file)
 void Customer::addRental(const RentalInfo& rental) {
-    rentedVehicles.emplace_back(rental);
-    // Update vehicle availability
-    rental.vehicle->setAvailability(false);
+    rentedVehicles.push_back(rental);
 }

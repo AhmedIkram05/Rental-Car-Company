@@ -15,6 +15,9 @@ public:
 
     // Override displayVehicle
     void displayVehicle() const override;
+
+    // Implement getBaseRentalRate
+    double getBaseRentalRate() const override;
 };
 
 #endif // SUV_H

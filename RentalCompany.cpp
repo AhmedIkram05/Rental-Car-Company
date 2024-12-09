@@ -39,7 +39,9 @@ int RentalCompany::levenshteinDistance(const std::string& s1, const std::string&
     for (size_t i = 1; i <= m; ++i) {
         for (size_t j = 1; j <= n; ++j) {
             int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
-            dp[i][j] = std::min({ dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost });
+            dp[i][j] = std::min({ dp[i - 1][j] + 1,
+                                  dp[i][j - 1] + 1,
+                                  dp[i - 1][j - 1] + cost });
         }
     }
 
@@ -129,6 +131,12 @@ Customer* RentalCompany::searchCustomer(int customerID) {
     return customer ? customer.get() : nullptr;
 }
 
+// **Calculate Rental Cost**
+double RentalCompany::calculateRentalCost(const std::shared_ptr<Vehicle>& vehicle, int rentalDays) const {
+    double ratePerDay = vehicle->getBaseRentalRate();
+    return ratePerDay * rentalDays;
+}
+
 // Rent a vehicle
 void RentalCompany::rentVehicle(int customerID, const std::string& vehicleID) {
     auto customer = searchCustomer(customerID);
@@ -145,11 +153,36 @@ void RentalCompany::rentVehicle(int customerID, const std::string& vehicleID) {
         throw std::runtime_error("Error: Vehicle ID " + vehicleID + " is not available.");
     }
 
+    // For simplicity, assume rental period is fixed at 7 days
+    int rentalDays = 7;
+    double rentalCost = calculateRentalCost(vehicle, rentalDays);
+
+    std::cout << "Rental Cost for " << rentalDays << " days: $" << rentalCost << "\n";
+
+    // Check for loyalty discount
+    bool discountApplied = false;
+    double discountAmount = 0.0;
+    if (customer->getLoyaltyPoints() >= 100) { // Threshold for discount
+        discountApplied = customer->applyLoyaltyDiscount(); // Deduct points and apply discount
+        if (discountApplied) {
+            discountAmount = rentalCost * 0.30; // 30% discount
+            rentalCost -= discountAmount;
+            std::cout << "Loyalty Discount Applied! Deducted 100 points. Discount Amount: $" << discountAmount << "\n";
+            std::cout << "New Rental Cost: $" << rentalCost << "\n";
+        }
+    }
+
+    // Proceed with rental
     std::string rentDate = DateUtils::getCurrentDate();
-    std::string dueDate = DateUtils::addDays(rentDate, 7); // Example: 7-day rental period
+    std::string dueDate = DateUtils::addDays(rentDate, rentalDays);
 
     customer->rentVehicle(vehicle, rentDate, dueDate);
     vehicle->setAvailability(false);
+
+    // Award loyalty points, e.g., 10 points per rental
+    int earnedPoints = 10;
+    customer->addLoyaltyPoints(earnedPoints);
+    std::cout << "Loyalty Points Earned: " << earnedPoints << "\n\n";
 }
 
 // Return a vehicle
@@ -164,16 +197,26 @@ void RentalCompany::returnVehicle(int customerID, const std::string& vehicleID, 
         throw std::runtime_error("Error: Vehicle ID " + vehicleID + " not found.");
     }
 
+    // Check if the customer has rented this vehicle
+    if (!customer->hasRentedVehicle(vehicle)) {
+        throw std::runtime_error("Error: Customer ID " + std::to_string(customerID) + " has not rented Vehicle ID " + vehicleID + ".");
+    }
+
     int daysLate = customer->returnVehicle(vehicle, returnDate);
     vehicle->setAvailability(true);
 
     if (daysLate > 0) {
         double lateFee = daysLate * vehicle->getLateFee();
         std::cout << "Late fee for " << daysLate << " days: $" << lateFee << "\n";
+    } else {
+        // Award bonus loyalty points for timely return
+        int bonusPoints = 5;
+        customer->addLoyaltyPoints(bonusPoints);
+        std::cout << "Timely return! Bonus Loyalty Points Earned: " << bonusPoints << "\n";
     }
 }
 
-// Load data from files
+// **Load data from files**
 void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::string& customersFile) {
     std::ifstream vFile(vehiclesFile);
     std::ifstream cFile(customersFile);
@@ -196,11 +239,14 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
 
         if (type == "Car") {
             addVehicle(std::make_shared<Car>(id, make, model, passengers, capacity, avail));
-        } else if (type == "Van") {
+        }
+        else if (type == "Van") {
             addVehicle(std::make_shared<Van>(id, make, model, passengers, capacity, avail));
-        } else if (type == "Minibus") {
+        }
+        else if (type == "Minibus") {
             addVehicle(std::make_shared<Minibus>(id, make, model, passengers, capacity, avail));
-        } else if (type == "SUV") {
+        }
+        else if (type == "SUV") {
             addVehicle(std::make_shared<SUV>(id, make, model, passengers, capacity, avail));
         }
     }
@@ -213,16 +259,37 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
         std::istringstream iss(line);
         int customerID;
         std::string name;
+        // Attempt to read LoyaltyPoints; if not present, default to 0
+        int loyaltyPoints = 0;
+        std::string firstToken;
         if (!(iss >> customerID >> std::quoted(name))) {
             continue;
         }
 
+        // Peek next character to determine if LoyaltyPoints is present
+        if (!iss.eof()) {
+            // Try to read the next token as LoyaltyPoints
+            std::streampos pos = iss.tellg();
+            if (!(iss >> loyaltyPoints)) {
+                // Not an integer; reset and set default
+                iss.clear();
+                iss.seekg(pos);
+                loyaltyPoints = 0;
+            }
+        }
+
         Customer customer(customerID, name);
+        customer.setLoyaltyPoints(loyaltyPoints);
+
         std::string vehicleID;
         while (iss >> vehicleID) {
             auto vehicle = searchVehicle(vehicleID);
             if (vehicle) {
-                customer.addRental({ vehicle, DateUtils::getCurrentDate(), DateUtils::addDays(DateUtils::getCurrentDate(), 7) });
+                // For simplicity, assume current date as rent date and rent period as 7 days
+                std::string rentDate = DateUtils::getCurrentDate();
+                std::string dueDate = DateUtils::addDays(rentDate, 7);
+                RentalInfo rental = { vehicle, rentDate, dueDate };
+                customer.addRental(rental);
                 vehicle->setAvailability(false);
             }
         }
@@ -230,7 +297,7 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
     }
 }
 
-// Save data to files
+// **Save data to files**
 void RentalCompany::saveToFile(const std::string& vehiclesFile, const std::string& customersFile) const {
     std::ofstream vFile(vehiclesFile);
     std::ofstream cFile(customersFile);
@@ -241,7 +308,25 @@ void RentalCompany::saveToFile(const std::string& vehiclesFile, const std::strin
 
     auto vehicles = vehicleRepository.getAll();
     for (const auto& vehicle : vehicles) {
-        vFile << vehicle->getVehicleID() << " " << std::quoted(vehicle->getMake()) << " "
+        // Determine vehicle type
+        std::string type;
+        if (dynamic_cast<Car*>(vehicle.get())) {
+            type = "Car";
+        }
+        else if (dynamic_cast<Van*>(vehicle.get())) {
+            type = "Van";
+        }
+        else if (dynamic_cast<Minibus*>(vehicle.get())) {
+            type = "Minibus";
+        }
+        else if (dynamic_cast<SUV*>(vehicle.get())) {
+            type = "SUV";
+        }
+        else {
+            type = "Unknown";
+        }
+
+        vFile << type << " " << vehicle->getVehicleID() << " " << std::quoted(vehicle->getMake()) << " "
               << std::quoted(vehicle->getModel()) << " " << vehicle->getPassengers() << " "
               << vehicle->getCapacity() << " " << vehicle->getAvailability() << "\n";
     }
@@ -252,7 +337,7 @@ void RentalCompany::saveToFile(const std::string& vehiclesFile, const std::strin
 
     auto customers = customerRepository.getAll();
     for (const auto& customer : customers) {
-        cFile << customer->getCustomerID() << " " << std::quoted(customer->getName());
+        cFile << customer->getCustomerID() << " " << std::quoted(customer->getName()) << " " << customer->getLoyaltyPoints();
         for (const auto& rental : customer->getRentedVehicles()) {
             cFile << " " << rental.vehicle->getVehicleID();
         }

@@ -47,7 +47,11 @@ public:
     bool hasRentedVehicle(const std::shared_ptr<Vehicle>& vehicle) const;
 
     // Apply loyalty discount
-    bool applyLoyaltyDiscount();
+    bool applyLoyaltyDiscount(); // Deduct points if eligible
+
+    // Manage loyalty points
+    void addLoyaltyPoints(int points);
+    void setLoyaltyPoints(int points); // For loading from file
 
     // Method to add a RentalInfo directly
     void addRental(const RentalInfo& rental);

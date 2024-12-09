@@ -23,7 +23,7 @@ public:
     std::shared_ptr<T> findById(const std::string& id) const {
         auto it = std::find_if(items.begin(), items.end(),
             [&id](const std::shared_ptr<T>& item) {
-                return item->getID() == id;
+                return item->getVehicleID() == id;
             });
         return (it != items.end()) ? *it : nullptr;
     }
