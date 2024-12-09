@@ -1,2 +1,0 @@
-Car V108 "Vauxhall" "Corsa" 4 32 1
-Car V109 "Toyota" "Corolla" 5 35 0
