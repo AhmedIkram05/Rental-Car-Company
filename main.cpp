@@ -12,6 +12,8 @@
 
 // Function declarations
 void displayMainMenu();
+void displayAdminMenu();
+void displayCustomerMenu();
 void runSpecificTests(RentalCompany& company);
 void handleRentVehicle(RentalCompany& company);
 void handleReturnVehicle(RentalCompany& company);
@@ -24,6 +26,7 @@ void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& 
 void handleAddCustomer(RentalCompany& company);
 void handleAddVehicle(RentalCompany& company);
 void handleDisplayAllVehicles(RentalCompany& company);
+bool adminLogin(); // New function declaration
 
 int main() {
     RentalCompany company;
@@ -34,82 +37,182 @@ int main() {
         std::cerr << "Failed to load data: " << e.what() << "\n";
     }
 
-    int choice;
+    int mainChoice;
+    bool exitProgram = false;
 
-    do {
+    while (!exitProgram) {
         displayMainMenu();
-        std::cin >> choice;
+        std::cin >> mainChoice;
 
         // Validate input
-        while (std::cin.fail() || choice < 1 || choice > 11) {
+        while (std::cin.fail() || mainChoice < 1 || mainChoice > 4) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            std::cout << "Invalid input. Please enter a number between 1 and 11: ";
-            std::cin >> choice;
+            std::cout << "Invalid input. Please enter a number between 1 and 4: ";
+            std::cin >> mainChoice;
         }
 
-        switch (choice) {
-            case 1:
-                handleAddCustomer(company);
-                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+        switch (mainChoice) {
+            case 1: { // Admin Menu
+                if (adminLogin()) { // Check login
+                    int adminChoice;
+                    bool backToMain = false;
+                    while (!backToMain) {
+                        displayAdminMenu();
+                        std::cin >> adminChoice;
+
+                        // Validate input
+                        while (std::cin.fail() || adminChoice < 1 || adminChoice > 7) {
+                            std::cin.clear();
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::cout << "Invalid input. Please enter a number between 1 and 7: ";
+                            std::cin >> adminChoice;
+                        }
+
+                        switch (adminChoice) {
+                            case 1:
+                                handleAddCustomer(company);
+                                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+                                break;
+                            case 2:
+                                handleAddVehicle(company);
+                                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+                                break;
+                            case 3:
+                                handleDisplayAllVehicles(company);
+                                break;
+                            case 4:
+                                handleDisplayCustomers(company);
+                                break;
+                            case 5:
+                                handleSearchVehicles(company);
+                                break;
+                            case 6:
+                                handleSearchCustomers(company);
+                                break;
+                            case 7:
+                                backToMain = true;
+                                break;
+                            default:
+                                std::cout << "Invalid choice. Please try again.\n";
+                        }
+                    }
+                } else {
+                    std::cout << "Access denied. Returning to Main Menu.\n";
+                }
                 break;
-            case 2:
-                handleAddVehicle(company);
-                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+            }
+            case 2: { // Customer Menu
+                int customerChoice;
+                bool backToMain = false;
+                while (!backToMain) {
+                    displayCustomerMenu();
+                    std::cin >> customerChoice;
+
+                    // Validate input
+                    while (std::cin.fail() || customerChoice < 1 || customerChoice > 4) {
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::cout << "Invalid input. Please enter a number between 1 and 4: ";
+                        std::cin >> customerChoice;
+                    }
+
+                    switch (customerChoice) {
+                        case 1:
+                            handleRentVehicle(company);
+                            company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+                            break;
+                        case 2:
+                            handleReturnVehicle(company);
+                            company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
+                            break;
+                        case 3:
+                            handleDisplayAvailableVehicles(company);
+                            break;
+                        case 4:
+                            backToMain = true;
+                            break;
+                        default:
+                            std::cout << "Invalid choice. Please try again.\n";
+                    }
+                }
                 break;
-            case 3:
-                handleRentVehicle(company);
-                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
-                break;
-            case 4:
-                handleReturnVehicle(company);
-                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
-                break;
-            case 5:
-                handleDisplayAvailableVehicles(company);
-                break;
-            case 6:
-                handleDisplayAllVehicles(company);
-                break;
-            case 7:
-                handleDisplayCustomers(company);
-                break;
-            case 8:
-                handleSearchVehicles(company);
-                break;
-            case 9:
-                handleSearchCustomers(company);
-                break;
-            case 10:
+            }
+            case 3: { // Run Tests
                 runSpecificTests(company);
                 break;
-            case 11:
+            }
+            case 4: { // Exit
                 std::cout << "Exiting the program. Goodbye!\n";
+                exitProgram = true;
                 break;
+            }
             default:
                 std::cout << "Invalid choice. Please try again.\n";
         }
-
-    } while (choice != 11);
+    }
 
     return 0;
+}
+
+// Admin Login Function
+bool adminLogin() {
+    const std::string USERNAME = "admin";
+    const std::string PASSWORD = "password123";
+    std::string inputUsername;
+    std::string inputPassword;
+    int attempts = 0;
+    const int MAX_ATTEMPTS = 3;
+
+    while (attempts < MAX_ATTEMPTS) {
+        std::cout << "=== Admin Login ===\n";
+        std::cout << "Username: ";
+        std::cin >> inputUsername;
+        std::cout << "Password: ";
+        std::cin >> inputPassword;
+
+        if (inputUsername == USERNAME && inputPassword == PASSWORD) {
+            std::cout << "Login successful.\n";
+            return true;
+        } else {
+            attempts++;
+            std::cout << "Invalid credentials. Attempts remaining: " << (MAX_ATTEMPTS - attempts) << "\n\n";
+        }
+    }
+
+    std::cout << "Maximum login attempts exceeded.\n";
+    return false;
 }
 
 // Function definitions
 
 void displayMainMenu() {
-    std::cout << "\n=== Rental Company Menu ===\n";
+    std::cout << "\n=== Rental Company Main Menu ===\n";
+    std::cout << "1. Admin\n";
+    std::cout << "2. Customers\n";
+    std::cout << "3. Run Specific Tests\n";
+    std::cout << "4. Exit\n";
+    std::cout << "Enter your choice: ";
+}
+
+void displayAdminMenu() {
+    std::cout << "\n=== Admin Menu ===\n";
     std::cout << "1. Add Customer\n";
     std::cout << "2. Add Vehicle\n";
-    std::cout << "3. Rent Vehicle\n";
-    std::cout << "4. Return Vehicle\n";
-    std::cout << "5. Display Available Vehicles\n";
-    std::cout << "6. Display All Vehicles\n";
-    std::cout << "7. Display Customers\n";
-    std::cout << "8. Search Vehicles\n";
-    std::cout << "9. Search Customers\n";
-    std::cout << "10. Run Specific Tests\n";
-    std::cout << "11. Exit\n";
+    std::cout << "3. Display All Vehicles\n";
+    std::cout << "4. Display All Customers\n";
+    std::cout << "5. Search Vehicles\n";
+    std::cout << "6. Search Customers\n";
+    std::cout << "7. Back to Main Menu\n";
+    std::cout << "Enter your choice: ";
+}
+
+void displayCustomerMenu() {
+    std::cout << "\n=== Customer Menu ===\n";
+    std::cout << "1. Rent Vehicle\n";
+    std::cout << "2. Return Vehicle\n";
+    std::cout << "3. Display Available Vehicles\n";
+    std::cout << "4. Back to Main Menu\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -210,7 +313,7 @@ void runSpecificTests(RentalCompany& company) {
 
     // Reload main data after tests
     company.clearData();
-    
+
     try {
         company.loadFromFile("mainVehicles.txt", "mainCustomers.txt");
         std::cout << "Main Data Reloaded Successfully.\n\n";
