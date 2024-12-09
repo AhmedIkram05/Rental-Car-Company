@@ -21,3 +21,8 @@ void Minibus::displayVehicle() const {
               << "\nAvailable: " << (getAvailability() ? "Yes" : "No")
               << "\nLate Fee: $" << getLateFee() << "/day\n\n";
 }
+
+// Implement getBaseRentalRate
+double Minibus::getBaseRentalRate() const {
+    return 80.0; // Example rate
+}

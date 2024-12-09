@@ -1,6 +1,6 @@
-101 "Alice"
-102 "Bob" V109
-103 "Charlie"
-104 "David"
-105 "Eve"
-106 "Christina"
+101 "Alice" 0
+102 "Bob" 10 V109
+103 "Charlie" 0
+104 "David" 0
+105 "Eve" 0
+106 "Christina" 0

@@ -9,12 +9,15 @@ public:
     // Constructors
     Van(const std::string& id, const std::string& mk, const std::string& mdl,
         int passengers, int storage, bool avail);
-    
+
     // Destructor
     ~Van();
-    
+
     // Override displayVehicle
     void displayVehicle() const override;
+
+    // Implement getBaseRentalRate
+    double getBaseRentalRate() const override;
 };
 
 #endif // VAN_H

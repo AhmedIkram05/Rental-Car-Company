@@ -21,3 +21,8 @@ void Car::displayVehicle() const {
               << "\nAvailable: " << (getAvailability() ? "Yes" : "No")
               << "\nLate Fee: $" << getLateFee() << "/day\n\n";
 }
+
+// Implement getBaseRentalRate
+double Car::getBaseRentalRate() const {
+    return 50.0; // Example rate
+}

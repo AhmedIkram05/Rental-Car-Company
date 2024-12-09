@@ -47,6 +47,9 @@ public:
     void rentVehicle(int customerID, const std::string& vehicleID);
     void returnVehicle(int customerID, const std::string& vehicleID, const std::string& returnDate);
 
+    // Calculate rental cost
+    double calculateRentalCost(const std::shared_ptr<Vehicle>& vehicle, int rentalDays) const;
+
     // Clear all data
     void clearData();
 

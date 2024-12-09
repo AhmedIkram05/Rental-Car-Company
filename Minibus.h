@@ -9,12 +9,15 @@ public:
     // Constructors
     Minibus(const std::string& id, const std::string& mk, const std::string& mdl,
             int passengers, int storage, bool avail);
-    
+
     // Destructor
     ~Minibus();
-    
+
     // Override displayVehicle
     void displayVehicle() const override;
+
+    // Implement getBaseRentalRate
+    double getBaseRentalRate() const override;
 };
 
 #endif // MINIBUS_H

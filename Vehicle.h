@@ -26,6 +26,9 @@ public:
     // Virtual function to be overridden by derived classes
     virtual void displayVehicle() const = 0;
 
+    //Add the following pure virtual function
+    virtual double getBaseRentalRate() const = 0;
+
     // Getters
     std::string getVehicleID() const;
     std::string getMake() const;

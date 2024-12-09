@@ -27,7 +27,12 @@ void handleDisplayAllVehicles(RentalCompany& company);
 
 int main() {
     RentalCompany company;
-    company.loadFromFile("mainVehicles.txt", "mainCustomers.txt");
+    try {
+        company.loadFromFile("mainVehicles.txt", "mainCustomers.txt");
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Failed to load data: " << e.what() << "\n";
+    }
 
     int choice;
 
@@ -79,14 +84,12 @@ int main() {
                 runSpecificTests(company);
                 break;
             case 11:
-                // Save data before exiting
-                company.saveToFile("mainVehicles.txt", "mainCustomers.txt");
-                std::cout << "Exiting program. Goodbye!\n";
-                return 0;
+                std::cout << "Exiting the program. Goodbye!\n";
+                break;
             default:
                 std::cout << "Invalid choice. Please try again.\n";
-                break;
         }
+
     } while (choice != 11);
 
     return 0;
@@ -220,8 +223,8 @@ void handleRentVehicle(RentalCompany& company) {
 
     try {
         company.rentVehicle(customerID, vehicleID);
-        std::cout << "Vehicle rented successfully.\n\n";
-        std::cout << "You must return the vehicle within 7 days.\n";
+        std::cout << "Vehicle rented successfully.\n";
+        std::cout << "You must return the vehicle within 7 days.\n\n";
     }
     catch (const std::exception& e) {
         std::cout << "Rental Failed: " << e.what() << "\n\n";
@@ -384,8 +387,10 @@ void displaySearchResults(const std::vector<std::shared_ptr<Vehicle>>& results) 
 
 void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& results) {
     if (results.empty()) {
-        std::cout << "No customers found matching the criteria.\n";
-    } else {
+        std::cout << "No customers match the search criteria.\n\n";
+    }
+    else {
+        std::cout << "Search Results:\n";
         for (const auto& customer : results) {
             customer->displayCustomer();
         }
