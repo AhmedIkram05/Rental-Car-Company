@@ -70,7 +70,7 @@ void RentalCompany::displayAvailableVehicles() const {
     }
 
     std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+    std::vector<int> widths = {6, 10, 10, 12, 8, 10, 6, 10};
 
     displayItems(availableVehicles, headers, widths);
 }
@@ -79,7 +79,7 @@ void RentalCompany::displayAvailableVehicles() const {
 void RentalCompany::displayAllVehicles() const {
     auto vehicles = vehicleRepository.getAll();
     std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+    std::vector<int> widths = {6, 10, 10, 12, 8, 10, 6, 10};
 
     displayItems(vehicles, headers, widths);
 }
