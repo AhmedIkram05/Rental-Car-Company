@@ -39,6 +39,9 @@ public:
     // Display all customers
     void displayCustomers() const;
 
+    // Display all customers
+    void displayAllCustomers() const;
+
     // Search for vehicles and customers
     std::vector<std::shared_ptr<Vehicle>> searchVehicles(const SearchCriteria& criteria) const;
     std::vector<std::shared_ptr<Customer>> searchCustomers(const CustomerSearchCriteria& criteria) const;

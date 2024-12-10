@@ -92,3 +92,23 @@ void Customer::setLoyaltyPoints(int points) {
 void Customer::addRental(const RentalInfo& rental) {
     rentedVehicles.push_back(rental);
 }
+
+// Implement toRow method**
+std::vector<std::string> Customer::toRow() const {
+    std::vector<std::string> row;
+    row.emplace_back(std::to_string(customerID));
+    row.emplace_back(name);
+    row.emplace_back(std::to_string(loyaltyPoints));
+
+    // Concatenate rented vehicle IDs separated by commas
+    std::string rentedVehiclesStr;
+    for (const auto& rental : rentedVehicles) {
+        rentedVehiclesStr += rental.vehicle->getVehicleID() + ", ";
+    }
+    if (!rentedVehiclesStr.empty()) {
+        rentedVehiclesStr = rentedVehiclesStr.substr(0, rentedVehiclesStr.size() - 2); // Remove trailing comma and space
+    }
+    row.emplace_back(rentedVehiclesStr);
+
+    return row;
+}
