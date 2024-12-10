@@ -40,14 +40,14 @@ public:
 
     // Display row for table
     virtual void displayRow(const std::vector<int>& widths) const {
-        std::cout << " " << std::setw(widths[0]) << vehicleID
+        std::cout << "| " << std::left << std::setw(widths[0]) << vehicleID
                   << " | " << std::setw(widths[1]) << make
                   << " | " << std::setw(widths[2]) << model
                   << " | " << std::setw(widths[3]) << passengers
                   << " | " << std::setw(widths[4]) << capacity
                   << " | " << std::setw(widths[5]) << (availability ? "Yes" : "No")
                   << " | " << std::setw(widths[6]) << getBaseRentalRate()
-                  << " | " << std::setw(widths[7]) << lateFee << " |";
+                  << " | " << std::setw(widths[7]) << lateFee << " |" << std::endl;
     }
 
     // Pure virtual function

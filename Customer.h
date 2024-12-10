@@ -8,6 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <iomanip>
+#include <sstream> // Include sstream for std::ostringstream
 #include "Vehicle.h"
 
 struct RentalInfo {
@@ -60,18 +61,23 @@ public:
 
     // Display row for table
     void displayRow(const std::vector<int>& widths) const {
-        std::cout << " " << std::setw(widths[0]) << customerID
+        std::cout << "| " << std::setw(widths[0]) << customerID
                   << " | " << std::setw(widths[1]) << name
                   << " | " << std::setw(widths[2]) << loyaltyPoints
-                  << " | ";
-        if (rentedVehicles.empty()) {
-            std::cout << std::setw(widths[3]) << "No rented vehicles";
-        } else {
-            for (const auto& rental : rentedVehicles) {
-                std::cout << rental.vehicle->getVehicleID() << " ";
-            }
+                  << " | " << std::setw(widths[3]) << getRentedVehiclesString(widths[3]) << " |" << std::endl;
+    }
+
+private:
+    std::string getRentedVehiclesString(int width) const {
+        std::ostringstream oss;
+        for (const auto& rental : rentedVehicles) {
+            oss << rental.vehicle->getVehicleID() << " ";
         }
-        std::cout << " |";
+        std::string rentedVehiclesStr = oss.str();
+        if (rentedVehiclesStr.length() > static_cast<std::size_t>(width)) {
+            rentedVehiclesStr = rentedVehiclesStr.substr(0, static_cast<std::size_t>(width) - 3) + "...";
+        }
+        return rentedVehiclesStr;
     }
 };
 
