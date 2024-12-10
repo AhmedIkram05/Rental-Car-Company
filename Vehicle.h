@@ -50,6 +50,18 @@ public:
                   << " | " << std::setw(widths[7]) << lateFee << " |";
     }
 
+    // Display row for table
+    virtual std::vector<std::string> toRow() const {
+        return {
+            vehicleID,
+            make,
+            model,
+            std::to_string(passengers),
+            std::to_string(capacity),
+            availability ? "Yes" : "No"
+        };
+    }
+
     // Pure virtual function
     virtual double getBaseRentalRate() const = 0;
 

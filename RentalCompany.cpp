@@ -69,19 +69,19 @@ void RentalCompany::displayAvailableVehicles() const {
         }
     }
 
-    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+    // Updated headers to include "Type" and ensure consistency
+    std::vector<std::string> headers = {"Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rental Rate", "Late Fee"};
 
-    displayItems(availableVehicles, headers, widths);
+    displayItems(availableVehicles, headers);
 }
 
 // Display all vehicles
 void RentalCompany::displayAllVehicles() const {
-    auto vehicles = vehicleRepository.getAll();
-    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+    std::vector<std::shared_ptr<Vehicle>> vehicles = vehicleRepository.getAll();
+    // Ensure headers include "Late Fee" to match toRow() output
+    std::vector<std::string> headers = {"Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rental Rate", "Late Fee"};
 
-    displayItems(vehicles, headers, widths);
+    displayItems(vehicles, headers);
 }
 
 // Display all customers
@@ -90,7 +90,14 @@ void RentalCompany::displayCustomers() const {
     std::vector<std::string> headers = {"ID", "Name", "Loyalty Points", "Rented Vehicles"};
     std::vector<int> widths = {4, 9, 14, 20};
 
-    displayItems(customers, headers, widths);
+    displayItems(customers, headers);}
+
+// Display all customers
+void RentalCompany::displayAllCustomers() const {
+    std::vector<std::shared_ptr<Customer>> customers = customerRepository.getAll();
+    std::vector<std::string> headers = {"Customer ID", "Name", "Loyalty Points"};
+
+    displayItems(customers, headers);
 }
 
 // Search for a vehicle by its ID

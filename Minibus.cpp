@@ -11,5 +11,5 @@ Minibus::Minibus(const std::string& id, const std::string& mk, const std::string
 
 // Implement getBaseRentalRate
 double Minibus::getBaseRentalRate() const {
-    return 80.0; // Example rate
+    return 65.0; // Example rate
 }

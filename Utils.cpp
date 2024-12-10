@@ -2,6 +2,7 @@
 
 #include "Utils.h"
 #include <vector>
+#include <string>
 
 // Levenshtein Distance Algorithm
 size_t levenshteinDistance(const std::string& s1, const std::string& s2) {

@@ -73,6 +73,10 @@ public:
         }
         std::cout << " |";
     }
+
+    // Display row for table
+    std::vector<std::string> toRow() const;
+
 };
 
 #endif // CUSTOMER_H
