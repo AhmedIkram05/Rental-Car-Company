@@ -201,15 +201,42 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
     std::string line;
     while (std::getline(vFile, line)) {
         std::istringstream iss(line);
-        std::string type, id, make, model;
+        std::string typeOrId, id, make, model;
         int passengers, capacity, availInt;
         bool avail;
 
-        if (!(iss >> type >> id >> std::quoted(make) >> std::quoted(model) >> passengers >> capacity >> availInt)) {
-            continue;
+        // Attempt to read the first token
+        if (!(iss >> typeOrId)) {
+            continue; // Skip malformed lines
         }
+
+        // List of known vehicle types
+        const std::vector<std::string> knownTypes = {"Car", "Van", "Minibus", "SUV"};
+
+        std::string type;
+        if (std::find(knownTypes.begin(), knownTypes.end(), typeOrId) != knownTypes.end()) {
+            // The first token is a known type
+            type = typeOrId;
+
+            if (!(iss >> id >> std::quoted(make) >> std::quoted(model) >> passengers >> capacity >> availInt)) {
+                std::cerr << "Warning: Malformed line in vehicles file: " << line << "\n";
+                continue;
+            }
+        }
+        else {
+            // The first token is not a known type; assume default type "Car"
+            type = "Car";
+            id = typeOrId;
+
+            if (!(iss >> std::quoted(make) >> std::quoted(model) >> passengers >> capacity >> availInt)) {
+                std::cerr << "Warning: Malformed line in vehicles file: " << line << "\n";
+                continue;
+            }
+        }
+
         avail = static_cast<bool>(availInt);
 
+        // Create the appropriate vehicle object
         if (type == "Car") {
             addVehicle(std::make_shared<Car>(id, make, model, passengers, capacity, avail));
         }
@@ -222,6 +249,10 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
         else if (type == "SUV") {
             addVehicle(std::make_shared<SUV>(id, make, model, passengers, capacity, avail));
         }
+        else {
+            std::cerr << "Warning: Unknown vehicle type \"" << type << "\" in vehicles file.\n";
+            continue;
+        }
     }
 
     if (!cFile.is_open()) {
@@ -232,23 +263,23 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
         std::istringstream iss(line);
         int customerID;
         std::string name;
-        // Attempt to read LoyaltyPoints; if not present, default to 0
-        int loyaltyPoints = 0;
-        std::string firstToken;
+
+        // Attempt to read customerID and name
         if (!(iss >> customerID >> std::quoted(name))) {
+            std::cerr << "Warning: Malformed line in customers file: " << line << "\n";
             continue;
         }
 
-        // Peek next character to determine if LoyaltyPoints is present
-        if (!iss.eof()) {
-            // Try to read the next token as LoyaltyPoints
-            std::streampos pos = iss.tellg();
-            if (!(iss >> loyaltyPoints)) {
-                // Not an integer; reset and set default
-                iss.clear();
-                iss.seekg(pos);
-                loyaltyPoints = 0;
-            }
+        int loyaltyPoints = 0;
+
+        // Store the current position before attempting to read loyaltyPoints
+        std::streampos pos = iss.tellg();
+
+        // Attempt to read loyaltyPoints
+        if (!(iss >> loyaltyPoints)) {
+            // If reading loyaltyPoints fails, reset the stream to the stored position
+            iss.clear(); // Clear the error flags
+            iss.seekg(pos); // Seek back to the stored position
         }
 
         auto customer = std::make_shared<Customer>(customerID, name);
@@ -264,6 +295,9 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
                 RentalInfo rental = { vehicle, rentDate, dueDate };
                 customer->addRental(rental);
                 vehicle->setAvailability(false);
+            }
+            else {
+                std::cerr << "Warning: Vehicle ID \"" << vehicleID << "\" not found for customer ID " << customerID << ".\n";
             }
         }
         addCustomer(customer);
