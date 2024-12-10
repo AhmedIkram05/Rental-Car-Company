@@ -157,8 +157,8 @@ int main() {
 
 // Admin Login Function
 bool adminLogin() {
-    const std::string USERNAME = "1";
-    const std::string PASSWORD = "1";
+    const std::string USERNAME = "0";
+    const std::string PASSWORD = "0";
     std::string inputUsername;
     std::string inputPassword;
     int attempts = 0;
@@ -183,18 +183,6 @@ bool adminLogin() {
     std::cout << "Maximum login attempts exceeded.\n";
     return false;
 }
-
-// Function definitions
-
-// ANSI escape codes for colors
-#define RESET   "\033[0m"
-#define RED     "\033[31m"
-#define GREEN   "\033[32m"
-#define YELLOW  "\033[33m"
-#define BLUE    "\033[34m"
-#define MAGENTA "\033[35m"
-#define CYAN    "\033[36m"
-#define WHITE   "\033[37m"
 
 void displayMainMenu() {
     std::cout << "\n==============================\n";

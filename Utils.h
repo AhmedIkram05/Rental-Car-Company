@@ -10,6 +10,10 @@
 #include <string>
 #include "Repository.h"
 
+// Function declarations
+inline void printSeparator(const std::vector<int>& widths);
+inline void printHeader(const std::vector<std::string>& headers, const std::vector<int>& widths);
+
 // Levenshtein Distance Algorithm
 size_t levenshteinDistance(const std::string& s1, const std::string& s2);
 
@@ -24,52 +28,19 @@ inline std::string truncateString(const std::string& str, size_t maxWidth) {
 
 // Template function to display items in a table format with dynamic sizing and overflow handling
 template <typename T>
-void displayItems(const std::vector<std::shared_ptr<T>>& items, const std::vector<std::string>& headers) {
-    const size_t MAX_WIDTH = 20;
-
-    // Calculate column widths based on headers
-    std::vector<size_t> widths;
-    for (const auto& header : headers) {
-        widths.push_back(std::min(header.length(), MAX_WIDTH));
+void displayItems(const std::vector<std::shared_ptr<T>>& items, const std::vector<std::string>& headers, const std::vector<int>& widths) {
+    if (headers.size() != widths.size()) {
+        throw std::runtime_error("Headers and widths size mismatch.");
     }
 
-    // Update widths based on content
+    // Print headers
+    printHeader(headers, widths);
+
+    // Print items
     for (const auto& item : items) {
-        std::vector<std::string> row = item->toRow();
-        for (size_t i = 0; i < row.size() && i < widths.size(); ++i) {
-            if (row[i].length() > widths[i]) {
-                widths[i] = std::min(row[i].length(), MAX_WIDTH);
-            }
-        }
+        item->displayRow(widths);
     }
-
-    // Print header
-    std::cout << "|";
-    for (size_t i = 0; i < headers.size(); ++i) {
-        std::cout << " " << std::setw(static_cast<int>(widths[i])) << std::left << headers[i] << " |";
-    }
-    std::cout << "\n|";
-    for (size_t i = 0; i < headers.size(); ++i) {
-        std::cout << std::string(widths[i] + 2, '-') << "|";
-    }
-    std::cout << "\n";
-
-    // Print rows
-    for (const auto& item : items) {
-        std::vector<std::string> row = item->toRow();
-        std::cout << "|";
-        for (size_t i = 0; i < row.size() && i < widths.size(); ++i) {
-            std::cout << " "
-                      << std::setw(static_cast<int>(widths[i]))
-                      << std::left
-                      << truncateString(row[i], widths[i])
-                      << " |";
-        }
-        std::cout << "\n";
-    }
-
-    // Print footer
-    std::cout << std::string((headers.size() * (MAX_WIDTH + 3)), '=') << "\n";
+    printSeparator(widths);
 }
 
 // Template for searching item by ID
@@ -106,6 +77,25 @@ std::vector<std::shared_ptr<T>> searchItems(const Repository<T>& repository, Cri
         }
     }
     return results;
+}
+
+// Function definitions
+inline void printSeparator(const std::vector<int>& widths) {
+    std::cout << "+";
+    for (const auto& width : widths) {
+        std::cout << std::string(static_cast<std::size_t>(width + 2), '-') << "+";
+    }
+    std::cout << std::endl;
+}
+
+inline void printHeader(const std::vector<std::string>& headers, const std::vector<int>& widths) {
+    printSeparator(widths);
+    std::cout << "|";
+    for (size_t i = 0; i < headers.size(); ++i) {
+        std::cout << " " << std::left << std::setw(widths[i]) << headers[i] << " |";
+    }
+    std::cout << std::endl;
+    printSeparator(widths);
 }
 
 #endif // UTILS_H
