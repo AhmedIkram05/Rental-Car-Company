@@ -7,7 +7,7 @@
 struct SearchCriteria {
     std::string make;
     std::string model;
-    int maxDistance;
+    size_t maxDistance;  // Changed from int to size_t
     int passengerCapacity;
     int storageCapacity;
     bool filterByAvailability;
@@ -15,7 +15,7 @@ struct SearchCriteria {
 
     // Default Constructor
     SearchCriteria()
-        : make(""), model(""), maxDistance(2), // Set a sensible default value
+        : make(""), model(""), maxDistance(2),
           passengerCapacity(-1), storageCapacity(-1),
           filterByAvailability(false), availability(false) {}
 };
@@ -23,11 +23,11 @@ struct SearchCriteria {
 struct CustomerSearchCriteria {
     int customerID;
     std::string name;
-    int maxDistance;
+    size_t maxDistance;  // Changed from int to size_t
 
     // Default Constructor
     CustomerSearchCriteria()
-        : customerID(-1), name(""), maxDistance(2) {} // Set a sensible default value
+        : customerID(-1), name(""), maxDistance(2) {}
 };
 
 #endif // SEARCHCRITERIA_H

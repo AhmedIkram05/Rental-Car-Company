@@ -9,19 +9,6 @@ SUV::SUV(const std::string& id, const std::string& mk, const std::string& mdl,
     setLateFee(15.0); // Fixed late fee rate for SUV
 }
 
-// Destructor
-SUV::~SUV() {}
-
-// Override displayVehicle
-void SUV::displayVehicle() const {
-    std::cout << "### SUV Details ###\n";
-    std::cout << "ID: " << getVehicleID() << "\nMake: " << getMake() << "\nModel: " << getModel()
-              << "\nPassenger Capacity: " << getPassengers()
-              << "\nStorage Capacity: " << getCapacity()
-              << "\nAvailable: " << (getAvailability() ? "Yes" : "No")
-              << "\nLate Fee: $" << getLateFee() << "/day\n\n";
-}
-
 // Implement getBaseRentalRate
 double SUV::getBaseRentalRate() const {
     return 80.0; // Example rate

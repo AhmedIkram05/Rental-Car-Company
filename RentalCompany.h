@@ -27,7 +27,7 @@ public:
     void removeVehicle(const std::string& vehicleID);
 
     // Add and remove customers
-    void addCustomer(const Customer& customer);
+    void addCustomer(const std::shared_ptr<Customer>& customer);
     void removeCustomer(int customerID);
 
     // Display all available vehicles
@@ -41,7 +41,7 @@ public:
 
     // Search for vehicles and customers
     std::vector<std::shared_ptr<Vehicle>> searchVehicles(const SearchCriteria& criteria) const;
-    std::vector<Customer> searchCustomers(const CustomerSearchCriteria& criteria) const;
+    std::vector<std::shared_ptr<Customer>> searchCustomers(const CustomerSearchCriteria& criteria) const;
 
     // Rent and return vehicles
     void rentVehicle(int customerID, const std::string& vehicleID);
@@ -65,9 +65,6 @@ public:
 private:
     Repository<Vehicle> vehicleRepository;
     Repository<Customer> customerRepository;
-
-    // Levenshtein Distance Algorithm
-    int levenshteinDistance(const std::string& s1, const std::string& s2) const;
 };
 
 #endif // RENTALCOMPANY_H

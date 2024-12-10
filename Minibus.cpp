@@ -9,19 +9,6 @@ Minibus::Minibus(const std::string& id, const std::string& mk, const std::string
     setLateFee(12.0); // Fixed late fee rate for Minibus
 }
 
-// Destructor
-Minibus::~Minibus() {}
-
-// Override displayVehicle
-void Minibus::displayVehicle() const {
-    std::cout << "### Minibus Details ###\n";
-    std::cout << "ID: " << getVehicleID() << "\nMake: " << getMake() << "\nModel: " << getModel()
-              << "\nPassenger Capacity: " << getPassengers()
-              << "\nStorage Capacity: " << getCapacity()
-              << "\nAvailable: " << (getAvailability() ? "Yes" : "No")
-              << "\nLate Fee: $" << getLateFee() << "/day\n\n";
-}
-
 // Implement getBaseRentalRate
 double Minibus::getBaseRentalRate() const {
     return 80.0; // Example rate

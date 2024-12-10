@@ -6,15 +6,12 @@
 
 class Van : public Vehicle {
 public:
-    // Constructors
+    // Constructor
     Van(const std::string& id, const std::string& mk, const std::string& mdl,
         int passengers, int storage, bool avail);
 
-    // Destructor
-    ~Van();
-
-    // Override displayVehicle
-    void displayVehicle() const override;
+    // Default destructor
+    ~Van() override = default;
 
     // Implement getBaseRentalRate
     double getBaseRentalRate() const override;

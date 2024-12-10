@@ -6,9 +6,6 @@ Vehicle::Vehicle(const std::string& id, const std::string& mk, const std::string
                  int passengers, int storage, bool avail)
     : vehicleID(id), make(mk), model(mdl), passengers(passengers), capacity(storage), availability(avail), lateFee(0.0) {}
 
-// Destructor
-Vehicle::~Vehicle() {}
-
 // Getters
 std::string Vehicle::getVehicleID() const { return vehicleID; }
 std::string Vehicle::getMake() const { return make; }

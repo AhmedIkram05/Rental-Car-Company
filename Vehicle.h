@@ -4,6 +4,8 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <iomanip>
 
 class Vehicle {
 protected:
@@ -16,17 +18,39 @@ protected:
     double lateFee; // Late fee per day
 
 public:
-    // Constructors
+    // Constructor
     Vehicle(const std::string& id, const std::string& mk, const std::string& mdl,
             int passengers, int storage, bool avail);
 
-    // Virtual destructor
-    virtual ~Vehicle();
+    // Default virtual destructor
+    virtual ~Vehicle() = default;
 
-    // Virtual function to be overridden by derived classes
-    virtual void displayVehicle() const = 0;
+    // Common displayVehicle method
+    virtual void displayVehicle() const {
+        std::cout << "### Vehicle Details ###\n";
+        std::cout << "ID: " << vehicleID << "\n"
+                  << "Make: " << make << "\n"
+                  << "Model: " << model << "\n"
+                  << "Passenger Capacity: " << passengers << "\n"
+                  << "Storage Capacity: " << capacity << "\n"
+                  << "Available: " << (availability ? "Yes" : "No") << "\n"
+                  << "Base Rental Rate: $" << getBaseRentalRate() << "/day\n"
+                  << "Late Fee: $" << lateFee << "/day\n\n";
+    }
 
-    //Add the following pure virtual function
+    // Display row for table
+    virtual void displayRow(const std::vector<int>& widths) const {
+        std::cout << " " << std::setw(widths[0]) << vehicleID
+                  << " | " << std::setw(widths[1]) << make
+                  << " | " << std::setw(widths[2]) << model
+                  << " | " << std::setw(widths[3]) << passengers
+                  << " | " << std::setw(widths[4]) << capacity
+                  << " | " << std::setw(widths[5]) << (availability ? "Yes" : "No")
+                  << " | " << std::setw(widths[6]) << getBaseRentalRate()
+                  << " | " << std::setw(widths[7]) << lateFee << " |";
+    }
+
+    // Pure virtual function
     virtual double getBaseRentalRate() const = 0;
 
     // Getters

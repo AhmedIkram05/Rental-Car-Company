@@ -157,8 +157,8 @@ int main() {
 
 // Admin Login Function
 bool adminLogin() {
-    const std::string USERNAME = "admin";
-    const std::string PASSWORD = "password123";
+    const std::string USERNAME = "1";
+    const std::string PASSWORD = "1";
     std::string inputUsername;
     std::string inputPassword;
     int attempts = 0;
@@ -186,17 +186,30 @@ bool adminLogin() {
 
 // Function definitions
 
+// ANSI escape codes for colors
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
+
 void displayMainMenu() {
-    std::cout << "\n=== Rental Company Main Menu ===\n";
+    std::cout << "\n==============================\n";
+    std::cout << "=== Rental Company Main Menu ===\n";
+    std::cout << "==============================\n";
     std::cout << "1. Admin\n";
     std::cout << "2. Customers\n";
     std::cout << "3. Run Specific Tests\n";
     std::cout << "4. Exit\n";
+    std::cout << "==============================\n";
     std::cout << "Enter your choice: ";
 }
 
 void displayAdminMenu() {
-    std::cout << "\n=== Admin Menu ===\n";
+    std::cout << "\n========= Admin Menu =========\n";
     std::cout << "1. Add Customer\n";
     std::cout << "2. Add Vehicle\n";
     std::cout << "3. Display All Vehicles\n";
@@ -204,6 +217,7 @@ void displayAdminMenu() {
     std::cout << "5. Search Vehicles\n";
     std::cout << "6. Search Customers\n";
     std::cout << "7. Back to Main Menu\n";
+    std::cout << "=============================\n";
     std::cout << "Enter your choice: ";
 }
 
@@ -241,7 +255,8 @@ void runSpecificTests(RentalCompany& company) {
     // Test 3: Adding new Customer - Christina (ID:106)...
     std::cout << "Test 3: Adding new Customer - Christina (ID:106)...\n";
     Customer customer(106, "Christina");
-    company.addCustomer(customer);
+    auto customerPtr = std::make_shared<Customer>(customer);
+    company.addCustomer(customerPtr);
     std::cout << "Test 3 PASSED: Customer Christina added successfully.\n\n";
 
     // Test 4a: David (ID:104) returning vehicle V106...
@@ -523,7 +538,7 @@ void handleAddCustomer(RentalCompany& company) {
     std::getline(std::cin, name);
 
     try {
-        company.addCustomer(Customer(customerID, name));
+        company.addCustomer(std::make_shared<Customer>(customerID, name));
         std::cout << "Customer added successfully.\n\n";
     }
     catch (const std::exception& e) {

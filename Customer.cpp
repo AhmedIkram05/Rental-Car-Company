@@ -3,6 +3,7 @@
 #include "DateUtils.h"
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 
 // Constructor
 Customer::Customer(int id, const std::string& nm) : customerID(id), name(nm), loyaltyPoints(0) {}
@@ -40,19 +41,24 @@ int Customer::returnVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::
 // Display customer information
 void Customer::displayCustomer() const {
     std::cout << "### Customer Details ###\n";
-    std::cout << "ID: " << customerID << "\nName: " << name
-              << "\nLoyalty Points: " << loyaltyPoints << "\nRented Vehicles:\n";
+    std::cout << "ID: " << customerID << "\n"
+              << "Name: " << name << "\n"
+              << "Loyalty Points: " << loyaltyPoints << "\n"
+              << "Rented Vehicles:\n";
 
     if (rentedVehicles.empty()) {
-        std::cout << "None\n\n";
+        std::cout << "  No rented vehicles\n";
     } else {
+        std::cout << std::left << std::setw(10) << "Vehicle ID"
+                  << std::setw(15) << "Rent Date"
+                  << std::setw(15) << "Due Date" << "\n";
         for (const auto& rental : rentedVehicles) {
-            std::cout << "- Vehicle ID: " << rental.vehicle->getVehicleID()
-                      << ", Rent Date: " << rental.rentDate
-                      << ", Due Date: " << rental.dueDate << "\n";
+            std::cout << std::left << std::setw(10) << rental.vehicle->getVehicleID()
+                      << std::setw(15) << rental.rentDate
+                      << std::setw(15) << rental.dueDate << "\n";
         }
-        std::cout << "\n";
     }
+    std::cout << "\n";
 }
 
 // Check if customer has rented a specific vehicle

@@ -23,115 +23,88 @@ RentalCompany::RentalCompany() {}
 // Destructor
 RentalCompany::~RentalCompany() {}
 
-// Levenshtein Distance Algorithm
-int RentalCompany::levenshteinDistance(const std::string& s1, const std::string& s2) const {
-    const size_t m = s1.size();
-    const size_t n = s2.size();
-    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
-
-    // Initialize first column
-    for (size_t i = 0; i <= m; ++i) dp[i][0] = static_cast<int>(i);
-
-    // Initialize first row
-    for (size_t j = 0; j <= n; ++j) dp[0][j] = static_cast<int>(j);
-
-    // Compute Levenshtein distance
-    for (size_t i = 1; i <= m; ++i) {
-        for (size_t j = 1; j <= n; ++j) {
-            int cost = (s1[i - 1] == s2[j - 1]) ? 0 : 1;
-            dp[i][j] = std::min({ dp[i - 1][j] + 1,
-                                  dp[i][j - 1] + 1,
-                                  dp[i - 1][j - 1] + cost });
-        }
-    }
-
-    return dp[m][n];
-}
-
 // Add a new vehicle (with duplication check)
 void RentalCompany::addVehicle(const std::shared_ptr<Vehicle>& vehicle) {
     if (vehicleRepository.findById(vehicle->getVehicleID()) != nullptr) {
         throw std::runtime_error("Error: Vehicle ID " + vehicle->getVehicleID() + " already exists.");
     }
-    addItem(vehicleRepository, vehicle);
+    vehicleRepository.add(vehicle);
 }
 
 // Remove a vehicle by its ID
 void RentalCompany::removeVehicle(const std::string& vehicleID) {
-    auto vehicle = searchItemById(vehicleRepository, vehicleID);
+    auto vehicle = vehicleRepository.findById(vehicleID);
     if (vehicle) {
-        removeItem(vehicleRepository, vehicle);
+        vehicleRepository.remove(vehicle);
     } else {
         throw std::runtime_error("Error: Vehicle ID " + vehicleID + " not found.");
     }
 }
 
-// Display all available vehicles
-void RentalCompany::displayAvailableVehicles() const {
-    auto vehicles = vehicleRepository.getAll();
-    bool anyAvailable = false;
-    for (const auto& vehicle : vehicles) {
-        if (vehicle->getAvailability()) {
-            vehicle->displayVehicle();
-            anyAvailable = true;
-        }
-    }
-    if (!anyAvailable) {
-        std::cout << "No available vehicles.\n";
-    }
-}
-
-// Display all vehicles
-void RentalCompany::displayAllVehicles() const {
-    auto vehicles = vehicleRepository.getAll();
-    if (vehicles.empty()) {
-        std::cout << "No vehicles found.\n";
-    } else {
-        displayItems(vehicles);
-    }
-}
-
-// Search for a vehicle by its ID
-std::shared_ptr<Vehicle> RentalCompany::searchVehicle(const std::string& vehicleID) const {
-    return searchItemById(vehicleRepository, vehicleID);
-}
-
 // Add a new customer (with duplication check)
-void RentalCompany::addCustomer(const Customer& customer) {
-    int customerID = customer.getCustomerID();
-    if (customerRepository.findById(customerID) != nullptr) {
-        throw std::runtime_error("Error: Customer ID " + std::to_string(customerID) + " already exists.");
+void RentalCompany::addCustomer(const std::shared_ptr<Customer>& customer) {
+    if (customerRepository.findById(customer->getCustomerID()) != nullptr) {
+        throw std::runtime_error("Error: Customer ID " + std::to_string(customer->getCustomerID()) + " already exists.");
     }
-    addItem(customerRepository, std::make_shared<Customer>(customer));
+    customerRepository.add(customer);
 }
 
 // Remove a customer by ID
 void RentalCompany::removeCustomer(int customerID) {
-    auto customer = searchItemById(customerRepository, customerID);
+    auto customer = customerRepository.findById(customerID);
     if (customer) {
-        removeItem(customerRepository, customer);
+        customerRepository.remove(customer);
     } else {
         throw std::runtime_error("Error: Customer ID " + std::to_string(customerID) + " not found.");
     }
 }
 
+// Display available vehicles
+void RentalCompany::displayAvailableVehicles() const {
+    auto vehicles = vehicleRepository.getAll();
+    std::vector<std::shared_ptr<Vehicle>> availableVehicles;
+    for (const auto& vehicle : vehicles) {
+        if (vehicle->getAvailability()) {
+            availableVehicles.push_back(vehicle);
+        }
+    }
+
+    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
+    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+
+    displayItems(availableVehicles, headers, widths);
+}
+
+// Display all vehicles
+void RentalCompany::displayAllVehicles() const {
+    auto vehicles = vehicleRepository.getAll();
+    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
+    std::vector<int> widths = {4, 9, 9, 10, 7, 9, 4, 8};
+
+    displayItems(vehicles, headers, widths);
+}
+
 // Display all customers
 void RentalCompany::displayCustomers() const {
     auto customers = customerRepository.getAll();
-    if (customers.empty()) {
-        std::cout << "No customers found.\n";
-    } else {
-        displayItems(customers);
-    }
+    std::vector<std::string> headers = {"ID", "Name", "Loyalty Points", "Rented Vehicles"};
+    std::vector<int> widths = {4, 9, 14, 20};
+
+    displayItems(customers, headers, widths);
+}
+
+// Search for a vehicle by its ID
+std::shared_ptr<Vehicle> RentalCompany::searchVehicle(const std::string& vehicleID) const {
+    return vehicleRepository.findById(vehicleID);
 }
 
 // Search for a customer by ID
 Customer* RentalCompany::searchCustomer(int customerID) {
-    auto customer = searchItemById(customerRepository, customerID);
+    auto customer = customerRepository.findById(customerID);
     return customer ? customer.get() : nullptr;
 }
 
-// **Calculate Rental Cost**
+// Calculate Rental Cost
 double RentalCompany::calculateRentalCost(const std::shared_ptr<Vehicle>& vehicle, int rentalDays) const {
     double ratePerDay = vehicle->getBaseRentalRate();
     return ratePerDay * rentalDays;
@@ -216,7 +189,7 @@ void RentalCompany::returnVehicle(int customerID, const std::string& vehicleID, 
     }
 }
 
-// **Load data from files**
+// Load data from files
 void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::string& customersFile) {
     std::ifstream vFile(vehiclesFile);
     std::ifstream cFile(customersFile);
@@ -278,8 +251,8 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
             }
         }
 
-        Customer customer(customerID, name);
-        customer.setLoyaltyPoints(loyaltyPoints);
+        auto customer = std::make_shared<Customer>(customerID, name);
+        customer->setLoyaltyPoints(loyaltyPoints);
 
         std::string vehicleID;
         while (iss >> vehicleID) {
@@ -289,7 +262,7 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
                 std::string rentDate = DateUtils::getCurrentDate();
                 std::string dueDate = DateUtils::addDays(rentDate, 7);
                 RentalInfo rental = { vehicle, rentDate, dueDate };
-                customer.addRental(rental);
+                customer->addRental(rental);
                 vehicle->setAvailability(false);
             }
         }
@@ -297,7 +270,7 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
     }
 }
 
-// **Save data to files**
+// Save data to files
 void RentalCompany::saveToFile(const std::string& vehiclesFile, const std::string& customersFile) const {
     std::ofstream vFile(vehiclesFile);
     std::ofstream cFile(customersFile);
@@ -371,7 +344,7 @@ std::vector<std::shared_ptr<Vehicle>> RentalCompany::searchVehicles(const Search
 }
 
 // Search Customers with Fuzzy Matching
-std::vector<Customer> RentalCompany::searchCustomers(const CustomerSearchCriteria& criteria) const {
+std::vector<std::shared_ptr<Customer>> RentalCompany::searchCustomers(const CustomerSearchCriteria& criteria) const {
     auto customerCriteria = [&](const std::shared_ptr<Customer>& customer) -> bool {
         bool matches = true;
         if (criteria.customerID != -1 && customer->getCustomerID() != criteria.customerID) {
@@ -383,12 +356,7 @@ std::vector<Customer> RentalCompany::searchCustomers(const CustomerSearchCriteri
         return matches;
     };
 
-    auto results = searchItems(customerRepository, customerCriteria);
-    std::vector<Customer> customerResults;
-    for (const auto& customer : results) {
-        customerResults.emplace_back(*customer);
-    }
-    return customerResults;
+    return searchItems(customerRepository, customerCriteria);
 }
 
 // Clear all data

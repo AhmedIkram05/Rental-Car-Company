@@ -9,19 +9,6 @@ Car::Car(const std::string& id, const std::string& mk, const std::string& mdl,
     setLateFee(10.0);
 }
 
-// Destructor
-Car::~Car() {}
-
-// Override displayVehicle
-void Car::displayVehicle() const {
-    std::cout << "### Car Details ###\n";
-    std::cout << "ID: " << getVehicleID() << "\nMake: " << getMake() << "\nModel: " << getModel()
-              << "\nPassenger Capacity: " << getPassengers()
-              << "\nStorage Capacity: " << getCapacity()
-              << "\nAvailable: " << (getAvailability() ? "Yes" : "No")
-              << "\nLate Fee: $" << getLateFee() << "/day\n\n";
-}
-
 // Implement getBaseRentalRate
 double Car::getBaseRentalRate() const {
     return 50.0; // Example rate

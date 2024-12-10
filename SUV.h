@@ -11,10 +11,7 @@ public:
         int passengers, int storage, bool avail);
 
     // Destructor
-    ~SUV();
-
-    // Override displayVehicle
-    void displayVehicle() const override;
+    ~SUV() override = default;
 
     // Implement getBaseRentalRate
     double getBaseRentalRate() const override;

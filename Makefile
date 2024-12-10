@@ -1,8 +1,6 @@
 # Variables
 CXX = clang++
-CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 \
-           -Wcast-align -Wconversion -Wsign-conversion -Wnull-dereference \
-           -g3 -O0 -MMD -MP
+CXXFLAGS = -std=c++17 -Wall -Wextra -Wpedantic -Wshadow -Wformat=2 -Wcast-align -Wconversion -Wsign-conversion -Wnull-dereference -g3 -O0 -MMD -MP
 BUILD_DIR = build/Debug
 TARGET = $(BUILD_DIR)/outDebug
 SRCS = $(wildcard *.cpp) # Finds all .cpp files in the directory

@@ -5,22 +5,35 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include <functional>
 #include <iostream>
+#include <iomanip>
 #include "Repository.h"
-#include "Vehicle.h"
-#include "Customer.h"
 
-// Template for displaying items
+// Levenshtein Distance Algorithm
+size_t levenshteinDistance(const std::string& s1, const std::string& s2);
+
+// Template function to display items in a table format
 template <typename T>
-void displayItems(const std::vector<std::shared_ptr<T>>& items) {
-    for (const auto& item : items) {
-        if constexpr (std::is_base_of<Vehicle, T>::value) {
-            item->displayVehicle();
-        } else if constexpr (std::is_same<T, Customer>::value) {
-            item->displayCustomer();
-        }
+void displayItems(const std::vector<std::shared_ptr<T>>& items, const std::vector<std::string>& headers, const std::vector<int>& widths) {
+    if (headers.size() != widths.size()) {
+        throw std::runtime_error("Headers and widths size mismatch.");
     }
+
+    // Print headers
+    std::cout << std::string(80, '=') << "\n";
+    std::cout << "|";
+    for (size_t i = 0; i < headers.size(); ++i) {
+        std::cout << " " << std::setw(widths[i]) << headers[i] << " |";
+    }
+    std::cout << "\n" << std::string(80, '=') << "\n";
+
+    // Print items
+    for (const auto& item : items) {
+        std::cout << "|";
+        item->displayRow(widths);
+        std::cout << "\n";
+    }
+    std::cout << std::string(80, '=') << "\n";
 }
 
 // Template for searching item by ID

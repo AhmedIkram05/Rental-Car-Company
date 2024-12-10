@@ -11,10 +11,7 @@ public:
             int passengers, int storage, bool avail);
 
     // Destructor
-    ~Minibus();
-
-    // Override displayVehicle
-    void displayVehicle() const override;
+    ~Minibus() override = default;
 
     // Implement getBaseRentalRate
     double getBaseRentalRate() const override;
