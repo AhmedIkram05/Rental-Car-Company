@@ -25,11 +25,18 @@ void Customer::rentVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::s
 
 // Return a vehicle
 int Customer::returnVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::string& returnDate) {
+    if (!hasRentedVehicle(vehicle)) {
+        throw std::runtime_error("Vehicle was not rented by this customer.");
+    }
+
     auto it = std::find_if(rentedVehicles.begin(), rentedVehicles.end(),
                            [&](const RentalInfo& rental) { return rental.vehicle->getVehicleID() == vehicle->getVehicleID(); });
 
     if (it != rentedVehicles.end()) {
         // Calculate days late
+        if (DateUtils::daysDifference(it->rentDate, returnDate) < 0) {
+            throw std::runtime_error("Return date cannot be before rent date.");
+        }
         int daysLate = DateUtils::daysDifference(it->dueDate, returnDate);
         rentedVehicles.erase(it);
         return daysLate > 0 ? daysLate : 0;
@@ -38,28 +45,7 @@ int Customer::returnVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::
     }
 }
 
-// Display customer information
-void Customer::displayCustomer() const {
-    std::cout << "### Customer Details ###\n";
-    std::cout << "ID: " << customerID << "\n"
-              << "Name: " << name << "\n"
-              << "Loyalty Points: " << loyaltyPoints << "\n"
-              << "Rented Vehicles:\n";
 
-    if (rentedVehicles.empty()) {
-        std::cout << "  No rented vehicles\n";
-    } else {
-        std::cout << std::left << std::setw(10) << "Vehicle ID"
-                  << std::setw(15) << "Rent Date"
-                  << std::setw(15) << "Due Date" << "\n";
-        for (const auto& rental : rentedVehicles) {
-            std::cout << std::left << std::setw(10) << rental.vehicle->getVehicleID()
-                      << std::setw(15) << rental.rentDate
-                      << std::setw(15) << rental.dueDate << "\n";
-        }
-    }
-    std::cout << "\n";
-}
 
 // Check if customer has rented a specific vehicle
 bool Customer::hasRentedVehicle(const std::shared_ptr<Vehicle>& vehicle) const {
@@ -80,6 +66,7 @@ bool Customer::applyLoyaltyDiscount() {
 // Add loyalty points
 void Customer::addLoyaltyPoints(int points) {
     loyaltyPoints += points;
+    if (loyaltyPoints < 0) loyaltyPoints = 0;
     std::cout << "Loyalty Points Updated: " << loyaltyPoints << "\n";
 }
 

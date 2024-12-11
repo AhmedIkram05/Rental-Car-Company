@@ -25,19 +25,6 @@ public:
     // Default virtual destructor
     virtual ~Vehicle() = default;
 
-    // Common displayVehicle method
-    virtual void displayVehicle() const {
-        std::cout << "### Vehicle Details ###\n";
-        std::cout << "ID: " << vehicleID << "\n"
-                  << "Make: " << make << "\n"
-                  << "Model: " << model << "\n"
-                  << "Passenger Capacity: " << passengers << "\n"
-                  << "Storage Capacity: " << capacity << "\n"
-                  << "Available: " << (availability ? "Yes" : "No") << "\n"
-                  << "Base Rental Rate: $" << getBaseRentalRate() << "/day\n"
-                  << "Late Fee: $" << lateFee << "/day\n\n";
-    }
-
     // Display row for table
     virtual std::vector<std::string> toRow() const {
         return {
@@ -54,6 +41,9 @@ public:
 
     // Pure virtual function
     virtual double getBaseRentalRate() const = 0;
+
+    // Pure virtual function
+    virtual std::string getType() const = 0;
 
     // Getters
     std::string getVehicleID() const;

@@ -22,6 +22,8 @@ public:
         row.insert(row.begin(), "SUV"); // Adding Type column
         return row;
     }
+
+    std::string getType() const override { return "SUV"; }
 };
 
 #endif // SUV_H

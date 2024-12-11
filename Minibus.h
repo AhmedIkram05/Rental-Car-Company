@@ -22,6 +22,9 @@ public:
         row.insert(row.begin(), "Minibus"); // Adding Type column
         return row;
     }
+
+    // Override getType
+    std::string getType() const override { return "Minibus"; }
 };
 
 #endif // MINIBUS_H

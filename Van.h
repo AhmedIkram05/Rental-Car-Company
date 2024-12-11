@@ -22,6 +22,9 @@ public:
         row.insert(row.begin(), "Van"); // Adding Type column
         return row;
     }
+
+    // Override getType
+    std::string getType() const override { return "Van"; }
 };
 
 #endif // VAN_H

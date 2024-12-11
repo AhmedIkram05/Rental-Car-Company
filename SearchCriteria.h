@@ -5,9 +5,11 @@
 #include <string>
 
 struct SearchCriteria {
+    std::string type;
     std::string make;
     std::string model;
-    size_t maxDistance;  // Changed from int to size_t
+    size_t maxDistanceMake;
+    size_t maxDistanceModel;  // Add separate maxDistance for model
     int passengerCapacity;
     int storageCapacity;
     bool filterByAvailability;
@@ -15,7 +17,8 @@ struct SearchCriteria {
 
     // Default Constructor
     SearchCriteria()
-        : make(""), model(""), maxDistance(2),
+        : type(""), make(""), model(""),
+          maxDistanceMake(2), maxDistanceModel(0),  // Set model maxDistance to 0 for exact match
           passengerCapacity(-1), storageCapacity(-1),
           filterByAvailability(false), availability(false) {}
 };

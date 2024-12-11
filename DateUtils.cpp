@@ -22,11 +22,10 @@ std::string DateUtils::addDays(const std::string& date, int days) {
 
 // Validates if a date string is in YYYY-MM-DD format and is a valid date
 bool DateUtils::isValidDate(const std::string& dateStr) {
-    std::tm tm = DateUtils::stringToTm(dateStr);
-    // Basic validation: Check year, month, day ranges
-    if (tm.tm_year < 0 || tm.tm_mon < 0 || tm.tm_mon > 11 || tm.tm_mday <= 0 || tm.tm_mday > 31) {
-        return false;
-    }
+    std::tm tm = {};
+    std::istringstream ss(dateStr);
+    ss >> std::get_time(&tm, "%Y-%m-%d");
+    if (ss.fail()) return false;
     return true;
 }
 

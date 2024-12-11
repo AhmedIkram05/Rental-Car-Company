@@ -43,9 +43,6 @@ public:
     // Return a vehicle
     int returnVehicle(const std::shared_ptr<Vehicle>& vehicle, const std::string& returnDate);
 
-    // Display customer information
-    void displayCustomer() const;
-
     // Check if customer has rented a specific vehicle
     bool hasRentedVehicle(const std::shared_ptr<Vehicle>& vehicle) const;
 

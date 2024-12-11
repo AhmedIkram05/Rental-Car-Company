@@ -24,9 +24,11 @@ RentalCompany::RentalCompany() {}
 RentalCompany::~RentalCompany() {}
 
 // Add a new vehicle (with duplication check)
+// RentalCompany.cpp
+
 void RentalCompany::addVehicle(const std::shared_ptr<Vehicle>& vehicle) {
     if (vehicleRepository.findById(vehicle->getVehicleID()) != nullptr) {
-        throw std::runtime_error("Error: Vehicle ID " + vehicle->getVehicleID() + " already exists.");
+        throw std::runtime_error("Vehicle with this ID already exists.");
     }
     vehicleRepository.add(vehicle);
 }
@@ -37,14 +39,14 @@ void RentalCompany::removeVehicle(const std::string& vehicleID) {
     if (vehicle) {
         vehicleRepository.remove(vehicle);
     } else {
-        throw std::runtime_error("Error: Vehicle ID " + vehicleID + " not found.");
+        throw std::runtime_error("Vehicle with ID " + vehicleID + " not found.");
     }
 }
 
 // Add a new customer (with duplication check)
 void RentalCompany::addCustomer(const std::shared_ptr<Customer>& customer) {
     if (customerRepository.findById(customer->getCustomerID()) != nullptr) {
-        throw std::runtime_error("Error: Customer ID " + std::to_string(customer->getCustomerID()) + " already exists.");
+        throw std::runtime_error("Customer with this ID already exists.");
     }
     customerRepository.add(customer);
 }
@@ -65,9 +67,8 @@ void RentalCompany::displayAvailableVehicles() const {
         return vehicle->getAvailability();
     });
 
-    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rate", "Late Fee" };
-    std::vector<int> widths = { 10, 10, 15, 15, 10, 10, 10, 10, 10 };
-
+    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Storage Capacity", "Available", "Rental Rate £/day", "Late Fee £/day" };
+    std::vector<int> widths = { 8, 10, 15, 15, 10, 16, 10, 18, 18 };
     displayItems(availableVehicles, headers, widths);
 }
 
@@ -75,8 +76,8 @@ void RentalCompany::displayAvailableVehicles() const {
 void RentalCompany::displayAllVehicles() const {
     auto allVehicles = vehicleRepository.getAll();
 
-    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rate", "Late Fee" };
-    std::vector<int> widths = { 10, 10, 15, 15, 10, 10, 10, 10, 10 };
+    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Storage Capacity", "Available", "Rental Rate £/day", "Late Fee £/day" };
+    std::vector<int> widths = { 8, 10, 15, 15, 10, 16, 10, 18, 18 };
 
     displayItems(allVehicles, headers, widths);
 }
@@ -248,7 +249,8 @@ void RentalCompany::loadFromFile(const std::string& vehiclesFile, const std::str
             addVehicle(std::make_shared<SUV>(id, make, model, passengers, capacity, avail));
         }
         else {
-            std::cerr << "Warning: Unknown vehicle type \"" << type << "\" in vehicles file.\n";
+            std::cerr << "Warning: Unknown vehicle type \"" << type << "\" in vehicles file: " << line << "\n";
+            addVehicle(std::make_shared<Car>(id, make, model, passengers, capacity, avail));
             continue;
         }
     }
@@ -352,43 +354,41 @@ void RentalCompany::saveToFile(const std::string& vehiclesFile, const std::strin
 
 // Search Vehicles with Fuzzy Matching
 std::vector<std::shared_ptr<Vehicle>> RentalCompany::searchVehicles(const SearchCriteria& criteria) const {
-    auto vehicleCriteria = [&](const std::shared_ptr<Vehicle>& vehicle) -> bool {
-        bool matches = true;
-        if (!criteria.make.empty() && levenshteinDistance(vehicle->getMake(), criteria.make) > criteria.maxDistance) {
-            matches = false;
-        }
-        if (!criteria.model.empty() && levenshteinDistance(vehicle->getModel(), criteria.model) > criteria.maxDistance) {
-            matches = false;
-        }
-        if (criteria.passengerCapacity != -1 && vehicle->getPassengers() != criteria.passengerCapacity) {
-            matches = false;
-        }
-        if (criteria.storageCapacity != -1 && vehicle->getCapacity() != criteria.storageCapacity) {
-            matches = false;
-        }
-        if (criteria.filterByAvailability && vehicle->getAvailability() != criteria.availability) {
-            matches = false;
-        }
-        return matches;
-    };
+    auto vehicles = vehicleRepository.getAll();
+    std::vector<std::shared_ptr<Vehicle>> results;
 
-    return searchItems(vehicleRepository, vehicleCriteria);
+    for (const auto& vehicle : vehicles) {
+        bool matches = true;
+        if (!criteria.make.empty() && levenshteinDistance(vehicle->getMake(), criteria.make) > criteria.maxDistanceMake) matches = false;
+        if (!criteria.model.empty() && levenshteinDistance(vehicle->getModel(), criteria.model) > criteria.maxDistanceModel) matches = false;
+        if (criteria.passengerCapacity != -1 && vehicle->getPassengers() != criteria.passengerCapacity) matches = false;
+        if (criteria.storageCapacity != -1 && vehicle->getCapacity() != criteria.storageCapacity) matches = false;
+        if (criteria.filterByAvailability && vehicle->getAvailability() != criteria.availability) matches = false;
+
+        if (matches) {
+            results.push_back(vehicle);
+        }
+    }
+
+    return results;
 }
 
 // Search Customers with Fuzzy Matching
 std::vector<std::shared_ptr<Customer>> RentalCompany::searchCustomers(const CustomerSearchCriteria& criteria) const {
-    auto customerCriteria = [&](const std::shared_ptr<Customer>& customer) -> bool {
-        bool matches = true;
-        if (criteria.customerID != -1 && customer->getCustomerID() != criteria.customerID) {
-            matches = false;
-        }
-        if (!criteria.name.empty() && levenshteinDistance(customer->getName(), criteria.name) > criteria.maxDistance) {
-            matches = false;
-        }
-        return matches;
-    };
+    auto customers = customerRepository.getAll();
+    std::vector<std::shared_ptr<Customer>> results;
 
-    return searchItems(customerRepository, customerCriteria);
+    for (const auto& customer : customers) {
+        bool matches = true;
+        if (criteria.customerID != -1 && customer->getCustomerID() != criteria.customerID) matches = false;
+        if (!criteria.name.empty() && levenshteinDistance(customer->getName(), criteria.name) > criteria.maxDistance) matches = false;
+
+        if (matches) {
+            results.push_back(customer);
+        }
+    }
+
+    return results;
 }
 
 // Clear all data

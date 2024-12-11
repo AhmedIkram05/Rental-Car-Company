@@ -10,6 +10,12 @@
 #include <string>
 #include "Repository.h"
 
+// Validation functions
+bool isValidName(const std::string& name);
+bool isValidVehicleID(const std::string& id);
+bool isValidCustomerID(int id);
+bool isValidModelName(const std::string& model);
+
 // Function declarations
 inline void printSeparator(const std::vector<int>& widths);
 inline void printHeader(const std::vector<std::string>& headers, const std::vector<int>& widths);
@@ -41,7 +47,11 @@ void displayItems(const std::vector<std::shared_ptr<T>>& items, const std::vecto
         const auto row = item->toRow();
         std::cout << "|";
         for (size_t i = 0; i < row.size(); ++i) {
-            std::cout << " " << std::left << std::setw(widths[i]) << truncateString(row[i], static_cast<size_t>(widths[i])) << " |";
+            if (i == 7 || i == 8) { // Assuming rental rate and late fee are at index 7 and 8
+                std::cout << " " << std::left << std::setw(widths[i]) << std::fixed << std::setprecision(2) << std::stod(row[i]) << " |";
+            } else {
+                std::cout << " " << std::left << std::setw(widths[i]) << truncateString(row[i], static_cast<size_t>(widths[i])) << " |";
+            }
         }
         std::cout << std::endl;
     }
@@ -102,5 +112,9 @@ inline void printHeader(const std::vector<std::string>& headers, const std::vect
     std::cout << std::endl;
     printSeparator(widths);
 }
+
+int getValidatedMenuChoice(int minOption, int maxOption);
+
+bool isValidModelName(const std::string &model);
 
 #endif // UTILS_H
