@@ -38,7 +38,12 @@ void displayItems(const std::vector<std::shared_ptr<T>>& items, const std::vecto
 
     // Print items
     for (const auto& item : items) {
-        item->displayRow(widths);
+        const auto row = item->toRow();
+        std::cout << "|";
+        for (size_t i = 0; i < row.size(); ++i) {
+            std::cout << " " << std::left << std::setw(widths[i]) << truncateString(row[i], static_cast<size_t>(widths[i])) << " |";
+        }
+        std::cout << std::endl;
     }
     printSeparator(widths);
 }

@@ -61,36 +61,34 @@ void RentalCompany::removeCustomer(int customerID) {
 
 // Display available vehicles
 void RentalCompany::displayAvailableVehicles() const {
-    auto vehicles = vehicleRepository.getAll();
-    std::vector<std::shared_ptr<Vehicle>> availableVehicles;
-    for (const auto& vehicle : vehicles) {
-        if (vehicle->getAvailability()) {
-            availableVehicles.push_back(vehicle);
-        }
-    }
+    auto availableVehicles = searchItems(vehicleRepository, [](const std::shared_ptr<Vehicle>& vehicle) {
+        return vehicle->getAvailability();
+    });
 
-    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {6, 10, 10, 12, 8, 10, 6, 10};
+    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rate", "Late Fee" };
+    std::vector<int> widths = { 10, 10, 15, 15, 10, 10, 10, 10, 10 };
 
     displayItems(availableVehicles, headers, widths);
 }
 
 // Display all vehicles
 void RentalCompany::displayAllVehicles() const {
-    auto vehicles = vehicleRepository.getAll();
-    std::vector<std::string> headers = {"ID", "Make", "Model", "Passengers", "Storage", "Available", "Rate", "Late Fee"};
-    std::vector<int> widths = {6, 10, 10, 12, 8, 10, 6, 10};
+    auto allVehicles = vehicleRepository.getAll();
 
-    displayItems(vehicles, headers, widths);
+    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rate", "Late Fee" };
+    std::vector<int> widths = { 10, 10, 15, 15, 10, 10, 10, 10, 10 };
+
+    displayItems(allVehicles, headers, widths);
 }
 
 // Display all customers
 void RentalCompany::displayCustomers() const {
-    auto customers = customerRepository.getAll();
-    std::vector<std::string> headers = {"ID", "Name", "Loyalty Points", "Rented Vehicles"};
-    std::vector<int> widths = {4, 9, 14, 20};
+    auto allCustomers = customerRepository.getAll();
 
-    displayItems(customers, headers, widths);
+    std::vector<std::string> headers = { "ID", "Name", "Loyalty Points", "Rented Vehicles" };
+    std::vector<int> widths = { 10, 20, 15, 30 };
+
+    displayItems(allCustomers, headers, widths);
 }
 
 // Search for a vehicle by its ID
