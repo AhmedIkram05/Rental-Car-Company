@@ -1,3 +1,13 @@
+/**
+ * The main function in the C++ program manages a rental company system with menus for admin and
+ * customer actions, including adding customers and vehicles, renting and returning vehicles, searching
+ * for vehicles and customers, and running specific test scenarios.
+ *
+ * @return The main function in the provided code is returning an integer value of 0 at the end of the
+ * program execution. This return statement `return 0;` signifies that the program has executed
+ * successfully and is exiting with a status code of 0, indicating no errors occurred during the
+ * program execution.
+ */
 // main.cpp
 #include "RentalCompany.h"
 #include "Utils.h"
@@ -13,9 +23,13 @@
 #include "Repository.h"
 
 // Function declarations
+
+// Display Menus
 void displayMainMenu();
 void displayAdminMenu();
 void displayCustomerMenu();
+
+// Input Handling
 void runSpecificTests(RentalCompany& company);
 void handleRentVehicle(RentalCompany& company);
 void handleReturnVehicle(RentalCompany& company);
@@ -28,8 +42,16 @@ void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& 
 void handleAddCustomer(RentalCompany& company);
 void handleAddVehicle(RentalCompany& company);
 void handleDisplayAllVehicles(RentalCompany& company);
-bool adminLogin(); // New function declaration
+bool adminLogin();
 
+
+/**
+ * The main function of a rental company program that interacts with users through menus for admin,
+ * customer, testing, and exiting functionalities.
+ *
+ * @return The `main` function is returning an integer value of 0, which is a common convention in C++
+ * to indicate successful program execution.
+ */
 int main() {
     RentalCompany company;
     try {
@@ -149,7 +171,14 @@ int main() {
     return 0;
 }
 
-// Admin Login Function
+/**
+ * The function `adminLogin` in C++ prompts the user for a username and password, allowing a maximum of
+ * 3 login attempts with predefined credentials before denying access.
+ *
+ * @return The function `adminLogin()` returns a boolean value - `true` if the login is successful
+ * (username and password match the predefined values), and `false` if the maximum number of login
+ * attempts is exceeded without a successful login.
+ */
 bool adminLogin() {
     const std::string USERNAME = "0";
     const std::string PASSWORD = "0";
@@ -178,6 +207,9 @@ bool adminLogin() {
     return false;
 }
 
+/**
+ * The function `displayMainMenu` prints out the main menu options for a rental company program in C++.
+ */
 void displayMainMenu() {
     std::cout << "\n==============================\n";
     std::cout << "=== Rental Company Main Menu ===\n";
@@ -190,6 +222,11 @@ void displayMainMenu() {
     std::cout << "Enter your choice: ";
 }
 
+
+/**
+ * The function `displayAdminMenu` prints out a menu for administrative tasks in a vehicle management
+ * system.
+ */
 void displayAdminMenu() {
     std::cout << "\n========= Admin Menu =========\n";
     std::cout << "1. Add Customer\n";
@@ -203,6 +240,10 @@ void displayAdminMenu() {
     std::cout << "Enter your choice: ";
 }
 
+/**
+ * The function `displayCustomerMenu` prints out a menu for customer actions in a vehicle management
+ * system.
+ */
 void displayCustomerMenu() {
     std::cout << "\n=== Customer Menu ===\n";
     std::cout << "1. Rent Vehicle\n";
@@ -212,7 +253,12 @@ void displayCustomerMenu() {
     std::cout << "Enter your choice: ";
 }
 
-// Run Specific Tests
+/**
+ * The function `handleRentVehicle` in C++ manages the process of renting a vehicle by a customer,
+ * including input validation and error handling.
+ *
+ * @param company A reference to the `RentalCompany` object representing the rental company system.
+ */
 void runSpecificTests(RentalCompany& company) {
     std::cout << "\n=== Running Specific Test Scenarios ===\n\n";
 
@@ -364,6 +410,17 @@ void handleRentVehicle(RentalCompany& company) {
     }
 }
 
+
+/**
+ * The function `handleReturnVehicle` in C++ prompts the user to enter a customer ID, vehicle ID, and
+ * return date, then attempts to return the vehicle in a rental company, displaying success or failure
+ * messages accordingly.
+ *
+ * @param company The `company` parameter in the `handleReturnVehicle` function is of type
+ * `RentalCompany&`, which means it is a reference to an object of the `RentalCompany` class. This
+ * parameter is used to interact with the rental company object to return a vehicle based on the
+ * provided customer
+ */
 void handleReturnVehicle(RentalCompany& company) {
     int customerID;
     std::string vehicleID;
@@ -387,19 +444,50 @@ void handleReturnVehicle(RentalCompany& company) {
     }
 }
 
+/**
+ * The function `handleDisplayAvailableVehicles` calls the `displayAvailableVehicles` method of a
+ * `RentalCompany` object.
+ *
+ * @param company The parameter `company` is an object of type `RentalCompany`, which is being passed
+ * by reference to the function `handleDisplayAvailableVehicles`.
+ */
 void handleDisplayAvailableVehicles(RentalCompany& company) {
     company.displayAvailableVehicles();
 }
 
+/**
+ * The function `handleDisplayCustomers` calls the `displayCustomers` method of a `RentalCompany`
+ * object.
+ *
+ * @param company The parameter `company` is an object of type `RentalCompany`, which is being passed
+ * by reference to the function `handleDisplayCustomers`.
+ */
 void handleDisplayAllVehicles(RentalCompany& company) {
     std::cout << "=== All Vehicles ===\n";
     company.displayAllVehicles();
 }
 
+/**
+ * The function `handleDisplayCustomers` calls the `displayCustomers` method of a `RentalCompany`
+ * object.
+ *
+ * @param company The parameter `company` is an object of type `RentalCompany`, which is being passed
+ * by reference to the function `handleDisplayCustomers`.
+ */
 void handleDisplayCustomers(RentalCompany& company) {
     company.displayCustomers();
 }
 
+/**
+ * The function `handleAddCustomer` in C++ prompts the user to enter a customer ID and name, then
+ * attempts to add a new customer to a rental company, displaying success or failure messages
+ * accordingly.
+ *
+ * @param company The `company` parameter in the `handleAddCustomer` function is of type
+ * `RentalCompany&`, which means it is a reference to an object of the `RentalCompany` class. This
+ * parameter is used to interact with the rental company object to add a new customer based on the
+ * provided customer ID and name.
+ */
 void handleSearchVehicles(RentalCompany& company) {
     SearchCriteria criteria;
     char choice;
@@ -470,6 +558,16 @@ void handleSearchVehicles(RentalCompany& company) {
     }
 }
 
+/**
+ * The function `handleSearchCustomers` in C++ allows the user to search for customers based on
+ * specific criteria such as customer ID and name, displaying the search results if any customers
+ * match the criteria.
+ *
+ * @param company The `company` parameter in the `handleSearchCustomers` function is of type
+ * `RentalCompany&`, which means it is a reference to an object of the `RentalCompany` class. This
+ * parameter is used to interact with the rental company object to search for customers based on the
+ * provided search criteria.
+ */
 void handleSearchCustomers(RentalCompany& company) {
     CustomerSearchCriteria criteria;
     char choice;
@@ -513,6 +611,14 @@ void handleSearchCustomers(RentalCompany& company) {
     }
 }
 
+/**
+ * The function `displayVehicleSearchResults` in C++ displays the search results for vehicles based on
+ * specific criteria, showing the vehicle type, ID, make, model, passengers, storage capacity,
+ * availability, rental rate, and late fee for each vehicle.
+ *
+ * @param results The `results` parameter is a vector of shared pointers to `Vehicle` objects
+ * containing the search results based on the search criteria provided by the user.
+ */
 void displayVehicleSearchResults(const std::vector<std::shared_ptr<Vehicle>>& results) {
     if (results.empty()) {
         std::cout << "No vehicles found matching the criteria.\n";
@@ -525,6 +631,14 @@ void displayVehicleSearchResults(const std::vector<std::shared_ptr<Vehicle>>& re
     displayItems(results, headers, widths);
 }
 
+/**
+ * The function `displayCustomerSearchResults` in C++ displays the search results for customers based
+ * on specific criteria, showing the customer ID, name, loyalty points, and rented vehicles for each
+ * customer.
+ *
+ * @param results The `results` parameter is a vector of shared pointers to `Customer` objects
+ * containing the search results based on the search criteria provided by the user.
+ */
 void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& results) {
     if (results.empty()) {
         std::cout << "No customers found matching the criteria.\n";
@@ -537,8 +651,16 @@ void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& 
     displayItems(results, headers, widths);
 }
 
-// In main.cpp
-
+/**
+ * The function `handleAddCustomer` in C++ prompts the user to enter a customer ID and name, then
+ * attempts to add a new customer to a rental company, displaying success or failure messages
+ * accordingly.
+ *
+ * @param company The `company` parameter in the `handleAddCustomer` function is of type
+ * `RentalCompany&`, which means it is a reference to an object of the `RentalCompany` class. This
+ * parameter is used to interact with the rental company object to add a new customer based on the
+ * provided customer ID and name.
+ */
 void handleAddCustomer(RentalCompany& company) {
     int customerID;
     std::string name;
@@ -570,6 +692,17 @@ void handleAddCustomer(RentalCompany& company) {
     }
 }
 
+/**
+ * The function `handleAddVehicle` in C++ prompts the user to enter details for a new vehicle, including
+ * the vehicle type, ID, make, model, passenger capacity, storage capacity, and availability, then
+ * attempts to add the new vehicle to a rental company, displaying success or failure messages
+ * accordingly.
+ *
+ * @param company The `company` parameter in the `handleAddVehicle` function is of type
+ * `RentalCompany&`, which means it is a reference to an object of the `RentalCompany` class. This
+ * parameter is used to interact with the rental company object to add a new vehicle based on the
+ * provided vehicle details.
+ */
 void handleAddVehicle(RentalCompany& company) {
     int vehicleType;
     std::cout << "Select Vehicle Type:\n";
