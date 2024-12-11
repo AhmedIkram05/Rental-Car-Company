@@ -20,8 +20,6 @@ public:
     std::vector<std::string> toRow() const override {
         auto row = Vehicle::toRow();
         row.insert(row.begin(), "Minibus"); // Adding Type column
-        row.push_back(std::to_string(getBaseRentalRate()));
-        row.push_back(std::to_string(getLateFee()));
         return row;
     }
 };

@@ -8,7 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <iomanip>
-#include <sstream> // Include sstream for std::ostringstream
+#include <sstream>
 #include "Vehicle.h"
 
 struct RentalInfo {
@@ -67,6 +67,9 @@ public:
                   << " | " << std::setw(widths[3]) << getRentedVehiclesString(widths[3]) << " |" << std::endl;
     }
 
+    // Implement toRow method
+    std::vector<std::string> toRow() const;
+
 private:
     std::string getRentedVehiclesString(int width) const {
         std::ostringstream oss;
@@ -79,10 +82,6 @@ private:
         }
         return rentedVehiclesStr;
     }
-
-    // Display row for table
-    std::vector<std::string> toRow() const;
-
 };
 
 #endif // CUSTOMER_H
