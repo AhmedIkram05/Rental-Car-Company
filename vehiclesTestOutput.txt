@@ -5,5 +5,5 @@ Car V104 "Honda" "Civic" 5 35 0
 Car V105 "Audi" "Q2" 4 35 0
 Car V106 "Seat" "Ateca" 5 45 1
 Car V107 "Peugeot" "2008" 5 50 0
-Car V108 "Vauxhall" "Corsa" 4 32 1
-Car V109 "Toyota" "Corolla" 5 35 0
+Car V108 "Vauxhall" "Corsa" 5 300 1
+Car V109 "Toyota" "Corolla" 5 400 0

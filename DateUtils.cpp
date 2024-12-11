@@ -6,7 +6,13 @@
 #include <sstream>
 #include <cmath>
 
-// Adds days to a given date string in YYYY-MM-DD format
+/**
+ * @brief Adds days to a given date string in YYYY-MM-DD format
+ *
+ * @param date The date string in YYYY-MM-DD format
+ * @param days The number of days to add
+ * @return std::string The new date string after adding the days
+ */
 std::string DateUtils::addDays(const std::string& date, int days) {
     std::tm tm = {};
     std::istringstream iss(date);
@@ -20,17 +26,25 @@ std::string DateUtils::addDays(const std::string& date, int days) {
     return oss.str();
 }
 
-// Validates if a date string is in YYYY-MM-DD format and is a valid date
+/**
+ * @brief Validates if a date string is in YYYY-MM-DD format and is a valid date
+ *
+ * @param dateStr The date string to validate
+ * @return bool True if the date string is valid, false otherwise
+ */
 bool DateUtils::isValidDate(const std::string& dateStr) {
-    std::tm tm = DateUtils::stringToTm(dateStr);
-    // Basic validation: Check year, month, day ranges
-    if (tm.tm_year < 0 || tm.tm_mon < 0 || tm.tm_mon > 11 || tm.tm_mday <= 0 || tm.tm_mday > 31) {
-        return false;
-    }
+    std::tm tm = {};
+    std::istringstream ss(dateStr);
+    ss >> std::get_time(&tm, "%Y-%m-%d");
+    if (ss.fail()) return false;
     return true;
 }
 
-// Gets the current date in YYYY-MM-DD format
+/**
+ * @brief Gets the current date in YYYY-MM-DD format
+ *
+ * @return std::string The current date in YYYY-MM-DD format
+ */
 std::string DateUtils::getCurrentDate() {
     auto now = std::chrono::system_clock::now();
     std::time_t now_c = std::chrono::system_clock::to_time_t(now);
@@ -40,7 +54,13 @@ std::string DateUtils::getCurrentDate() {
     return oss.str();
 }
 
-// Calculates the difference in days between two dates in YYYY-MM-DD format
+/**
+ * @brief Calculates the difference in days between two dates in YYYY-MM-DD format
+ *
+ * @param dueDateStr The due date string in YYYY-MM-DD format
+ * @param returnDateStr The return date string in YYYY-MM-DD format
+ * @return int The difference in days between the two dates
+ */
 int DateUtils::daysDifference(const std::string& dueDateStr, const std::string& returnDateStr) {
     std::tm dueTm = stringToTm(dueDateStr);
     std::tm returnTm = stringToTm(returnDateStr);
@@ -56,7 +76,12 @@ int DateUtils::daysDifference(const std::string& dueDateStr, const std::string& 
     return static_cast<int>(std::floor(difference));
 }
 
-// Converts a date string in YYYY-MM-DD format to std::tm
+/**
+ * @brief Converts a date string in YYYY-MM-DD format to std::tm
+ *
+ * @param dateStr The date string in YYYY-MM-DD format
+ * @return std::tm The std::tm structure representing the date
+ */
 std::tm DateUtils::stringToTm(const std::string& dateStr) {
     std::tm tm = {};
     std::istringstream ss(dateStr);
@@ -67,7 +92,13 @@ std::tm DateUtils::stringToTm(const std::string& dateStr) {
     return tm;
 }
 
-// Calculates the difference in days between two dates in YYYY-MM-DD format
+/**
+ * @brief Calculates the difference in days between two dates in YYYY-MM-DD format
+ *
+ * @param dueDate The due date string in YYYY-MM-DD format
+ * @param returnDate The return date string in YYYY-MM-DD format
+ * @return int The difference in days between the two dates
+ */
 int DateUtils::calculateDaysLate(const std::string& dueDate, const std::string& returnDate) {
     std::tm due_tm = {};
     std::tm return_tm = {};
