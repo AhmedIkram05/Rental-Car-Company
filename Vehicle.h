@@ -39,18 +39,6 @@ public:
     }
 
     // Display row for table
-    virtual void displayRow(const std::vector<int>& widths) const {
-        std::cout << "| " << std::left << std::setw(widths[0]) << vehicleID
-                  << " | " << std::setw(widths[1]) << make
-                  << " | " << std::setw(widths[2]) << model
-                  << " | " << std::setw(widths[3]) << passengers
-                  << " | " << std::setw(widths[4]) << capacity
-                  << " | " << std::setw(widths[5]) << (availability ? "Yes" : "No")
-                  << " | " << std::setw(widths[6]) << getBaseRentalRate()
-                  << " | " << std::setw(widths[7]) << lateFee << " |" << std::endl;
-    }
-
-    // Display row for table
     virtual std::vector<std::string> toRow() const {
         return {
             vehicleID,
@@ -58,7 +46,9 @@ public:
             model,
             std::to_string(passengers),
             std::to_string(capacity),
-            availability ? "Yes" : "No"
+            availability ? "Yes" : "No",
+            std::to_string(getBaseRentalRate()),
+            std::to_string(lateFee)
         };
     }
 

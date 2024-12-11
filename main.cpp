@@ -494,23 +494,25 @@ void handleSearchCustomers(RentalCompany& company) {
 void displaySearchResults(const std::vector<std::shared_ptr<Vehicle>>& results) {
     if (results.empty()) {
         std::cout << "No vehicles found matching the criteria.\n";
-    } else {
-        for (const auto& vehicle : results) {
-            vehicle->displayVehicle();
-        }
+        return;
     }
+
+    std::vector<std::string> headers = { "Type", "ID", "Make", "Model", "Passengers", "Capacity", "Available", "Rate", "Late Fee" };
+    std::vector<int> widths = { 10, 10, 15, 15, 10, 10, 10, 10, 10 };
+
+    displayItems(results, headers, widths);
 }
 
 void displayCustomerSearchResults(const std::vector<std::shared_ptr<Customer>>& results) {
     if (results.empty()) {
-        std::cout << "No customers match the search criteria.\n\n";
+        std::cout << "No customers found matching the criteria.\n";
+        return;
     }
-    else {
-        std::cout << "Search Results:\n";
-        for (const auto& customer : results) {
-            customer->displayCustomer();
-        }
-    }
+
+    std::vector<std::string> headers = { "ID", "Name", "Loyalty Points", "Rented Vehicles" };
+    std::vector<int> widths = { 10, 20, 15, 30 };
+
+    displayItems(results, headers, widths);
 }
 
 void handleAddCustomer(RentalCompany& company) {
