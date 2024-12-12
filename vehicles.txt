@@ -1,7 +1,0 @@
-V101 "Ford" "Fiesta" 5 40 1
-V102 "Audi" "Q8" 6 60 0
-V103 "Nissan" "Micra" 4 30 1
-V104 "Honda" "Civic" 5 35 1
-V105 "Audi" "Q2" 4 35 0
-V106 "Seat" "Ateca" 5 45 1
-V107 "Peugeot" "2008" 5 50 1
